@@ -2,13 +2,13 @@
 
 namespace Stripe;
 
-class Product extends ApiResource
+class SKU extends ApiResource
 {
     /**
-     * @param string $id The ID of the Product to retrieve.
+     * @param string $id The ID of the SKU to retrieve.
      * @param array|string|null $opts
      *
-     * @return Product
+     * @return SKU
      */
     public static function retrieve($id, $opts = null)
     {
@@ -19,7 +19,7 @@ class Product extends ApiResource
      * @param array|null $params
      * @param array|string|null $opts
      *
-     * @return Product The created Product.
+     * @return SKU The created SKU.
      */
     public static function create($params = null, $opts = null)
     {
@@ -29,7 +29,7 @@ class Product extends ApiResource
     /**
      * @param array|string|null $opts
      *
-     * @return Product The saved Product.
+     * @return SKU The saved SKU.
      */
     public function save($opts = null)
     {
@@ -40,10 +40,21 @@ class Product extends ApiResource
      * @param array|null $params
      * @param array|string|null $opts
      *
-     * @return Collection of Products
+     * @return Collection of SKUs
      */
     public static function all($params = null, $opts = null)
     {
         return self::_all($params, $opts);
+    }
+
+    /**
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return SKU The deleted sku.
+     */
+    public function delete($params = null, $opts = null)
+    {
+        return $this->_delete($params, $opts);
     }
 }
