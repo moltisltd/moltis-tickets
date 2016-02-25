@@ -131,4 +131,18 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
         }
         return false;
     }
+    
+    public function getMemberships() {
+        return $this->hasMany(OrganisationMembers::className(), ['user_id' => 'id']);
+    }
+    public function getOrganisations() {
+        $organisations = [];
+        foreach ($this->memberships as $membership) {
+            $organisations[] = $membership->organisation;
+        }
+        return $organisations;
+    }
+    public function getCarts() {
+        return $this->hasMany(Cart::className(), ['customer_id', 'id']);
+    }
 }

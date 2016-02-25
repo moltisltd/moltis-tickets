@@ -41,4 +41,7 @@ class TicketType extends \yii\db\ActiveRecord
             'name' => 'Ticket Type Name',
         ];
     }
+    public function getTickets() {
+        return $this->hasMany(Ticket::className(), ['type_id' => 'id']);
+    }
 }

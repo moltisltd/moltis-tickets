@@ -18,9 +18,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'slug')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'start_time')->textInput() ?>
+    <?= $form->field($model, 'start_time')->input('datetime') ?>
 
-    <?= $form->field($model, 'end_time')->textInput() ?>
+    <?= $form->field($model, 'end_time')->input('datetime') ?>
 
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 

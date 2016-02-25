@@ -16,21 +16,19 @@ use Yii;
  * @property string $description
  * @property string $summary
  */
-class Event extends \yii\db\ActiveRecord
-{
+class Event extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'event';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['owner_id', 'name', 'slug', 'start_time', 'end_time', 'description', 'summary'], 'required'],
             [['owner_id'], 'integer'],
@@ -45,8 +43,7 @@ class Event extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => 'Event ID',
             'owner_id' => 'Owner Organisation ID',
@@ -57,5 +54,13 @@ class Event extends \yii\db\ActiveRecord
             'description' => 'Description',
             'summary' => 'Summary',
         ];
+    }
+
+    public function getOwner() {
+        return $this->hasOne(Organisation::className(), ['id' => 'owner_id']);
+    }
+    
+    public function getTicketGroups() {
+        return $this->hasMany(TicketGroup::className(), ['event_id' => 'id']);
     }
 }

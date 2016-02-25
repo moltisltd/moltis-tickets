@@ -13,21 +13,19 @@ use Yii;
  * @property string $email
  * @property string $summary
  */
-class Organisation extends \yii\db\ActiveRecord
-{
+class Organisation extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'organisation';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['name', 'url', 'email', 'summary'], 'required'],
             [['summary'], 'string'],
@@ -39,8 +37,7 @@ class Organisation extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => 'Organisation ID',
             'name' => 'Organisation Name',
@@ -48,5 +45,13 @@ class Organisation extends \yii\db\ActiveRecord
             'email' => 'Organisation Contact Email',
             'summary' => 'Organisation Summary',
         ];
+    }
+
+    public function getEvents() {
+        return $this->hasMany(Event::className(), ['owner_id' => 'id']);
+    }
+
+    public function getMembers() {
+        return $this->hasMany(OrganisationMembers::className(), ['organisation_id' => 'id']);
     }
 }

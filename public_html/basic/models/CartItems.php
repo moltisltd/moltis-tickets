@@ -43,4 +43,12 @@ class CartItems extends \yii\db\ActiveRecord
             'quantity' => 'Quantity',
         ];
     }
+    
+    public function getCart() {
+        return $this->hasOne(Cart::className(), ['id' => 'cart_id']);
+    }
+    
+    public function getTicket() {
+        return $this->hasOne(Ticket::className(), ['id' => 'ticket_id']);
+    }
 }

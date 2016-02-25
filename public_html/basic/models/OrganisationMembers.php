@@ -40,7 +40,15 @@ class OrganisationMembers extends \yii\db\ActiveRecord
         return [
             'organisation_id' => 'Organisation ID',
             'user_id' => 'User ID',
-            'founder' => 'Founder flag',
+            'founder' => 'Founder',
         ];
+    }
+    
+    public function getOrganisation()
+    {
+        return $this->hasOne(Organisation::className(), ['id' => 'organisation_id']);
+    }
+    public function getUser() {
+        return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 }

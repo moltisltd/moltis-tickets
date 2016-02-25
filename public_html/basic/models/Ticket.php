@@ -19,21 +19,19 @@ use Yii;
  * @property string $sell_from
  * @property string $sell_until
  */
-class Ticket extends \yii\db\ActiveRecord
-{
+class Ticket extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'ticket';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['group_id', 'type_id', 'name', 'ticket_price', 'ticket_fee', 'fee_included', 'ticket_limit', 'description', 'sell_from', 'sell_until'], 'required'],
             [['group_id', 'type_id', 'fee_included', 'ticket_limit'], 'integer'],
@@ -47,8 +45,7 @@ class Ticket extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => 'Ticket ID',
             'group_id' => 'Ticket Group ID',
@@ -62,5 +59,15 @@ class Ticket extends \yii\db\ActiveRecord
             'sell_from' => 'Start selling from',
             'sell_until' => 'Stop selling at',
         ];
+    }
+
+    public function getGroup() {
+        return $this->hasOne(TicketGroup::className(), ['id' => 'group_id']);
+    }
+    public function getType() {
+        return $this->hasOne(TicketType::className(), ['id' => 'type_id']);
+    }
+    public function getCartItems() {
+        return $this->hasMany(CartItems::className(), ['ticket_id' => 'id']);
     }
 }

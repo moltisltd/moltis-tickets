@@ -16,6 +16,9 @@ use Yii;
  */
 class Cart extends \yii\db\ActiveRecord
 {
+    const CART_PENDING = 0x001;
+    const CART_SOLD = 0x002;
+    const CART_REFUNDED = 0x004;
     /**
      * @inheritdoc
      */
@@ -50,5 +53,12 @@ class Cart extends \yii\db\ActiveRecord
             'updated' => 'Time last updated',
             'status' => 'Status',
         ];
+    }
+    
+    public function getItems() {
+        return $this->hasMany(CartItems::className(), ['cart_id' => 'id']);
+    }
+    public function getCustomer() {
+        return $this->hasOne(User::className(), ['id', 'customer_id']);
     }
 }

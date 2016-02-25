@@ -46,4 +46,13 @@ class TicketGroup extends \yii\db\ActiveRecord
             'ticket_limit' => 'Tickets Available',
         ];
     }
+    
+    public function getEvent()
+    {
+        return $this->hasOne(Event::className(), ['id' => 'event_id']);
+    }
+    
+    public function getTickets() {
+        return $this->hasMany(Ticket::className(), ['group_id' => 'id']);
+    }
 }
