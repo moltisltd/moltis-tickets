@@ -65,13 +65,13 @@ class OrganisationController extends Controller {
                 'code' => $code,
                 'client_secret' => Yii::$app->params['stripeSecretKey'],
             );
-            var_dump($token_request_body);
             $req = curl_init('https://connect.stripe.com/oauth/token');
             curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($req, CURLOPT_POST, true);
             curl_setopt($req, CURLOPT_POSTFIELDS, http_build_query($token_request_body));
+            curl_setopt($req, CURLOPT_SSL_VERIFYPEER, true);
+            curl_setopt($req, CURLOPT_CAINFO, "E:\doc\moltis-tickets\cacert.pem");
             $respCode = curl_getinfo($req, CURLINFO_HTTP_CODE);
-            var_dump(curl_exec($req));die();
             $resp = json_decode(curl_exec($req), true);
             curl_close($req);
 

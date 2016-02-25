@@ -12,6 +12,8 @@ use Yii;
  * @property string $url
  * @property string $email
  * @property string $summary
+ * @property string $stripe_access_token
+ * @property string $stripe_user_id
  */
 class Organisation extends \yii\db\ActiveRecord {
 

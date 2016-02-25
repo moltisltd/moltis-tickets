@@ -66,7 +66,7 @@ class UserController extends Controller
      */
     public function actionCreate()
     {
-		if (\Yii::$app->user->isGuest) {
+		if (!\Yii::$app->user->isGuest) {
 			return $this->goHome();
 		}
         $model = new User();
