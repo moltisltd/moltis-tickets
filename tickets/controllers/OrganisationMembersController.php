@@ -32,6 +32,13 @@ class OrganisationMembersController extends Controller
      */
     public function actionIndex()
     {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        }
         $dataProvider = new ActiveDataProvider([
             'query' => OrganisationMembers::find(),
         ]);
@@ -49,6 +56,13 @@ class OrganisationMembersController extends Controller
      */
     public function actionView($organisation_id, $user_id)
     {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        }
         return $this->render('view', [
             'model' => $this->findModel($organisation_id, $user_id),
         ]);
@@ -61,6 +75,13 @@ class OrganisationMembersController extends Controller
      */
     public function actionCreate()
     {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        }
         $model = new OrganisationMembers();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -81,6 +102,13 @@ class OrganisationMembersController extends Controller
      */
     public function actionUpdate($organisation_id, $user_id)
     {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        }
         $model = $this->findModel($organisation_id, $user_id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -101,6 +129,13 @@ class OrganisationMembersController extends Controller
      */
     public function actionDelete($organisation_id, $user_id)
     {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        }
         $this->findModel($organisation_id, $user_id)->delete();
 
         return $this->redirect(['index']);

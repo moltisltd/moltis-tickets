@@ -32,6 +32,13 @@ class TicketTypeController extends Controller
      */
     public function actionIndex()
     {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        }
         $dataProvider = new ActiveDataProvider([
             'query' => TicketType::find(),
         ]);
@@ -48,6 +55,13 @@ class TicketTypeController extends Controller
      */
     public function actionView($id)
     {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        }
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -60,6 +74,13 @@ class TicketTypeController extends Controller
      */
     public function actionCreate()
     {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        }
         $model = new TicketType();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -79,6 +100,13 @@ class TicketTypeController extends Controller
      */
     public function actionUpdate($id)
     {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        }
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -98,6 +126,13 @@ class TicketTypeController extends Controller
      */
     public function actionDelete($id)
     {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        }
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -112,6 +147,13 @@ class TicketTypeController extends Controller
      */
     protected function findModel($id)
     {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        }
         if (($model = TicketType::findOne($id)) !== null) {
             return $model;
         } else {

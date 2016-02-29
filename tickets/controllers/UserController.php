@@ -35,6 +35,10 @@ class UserController extends Controller
 		if (\Yii::$app->user->isGuest) {
 			return $this->goHome();
 		}
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin) {
+            return $this->actionView($user->getId());
+        }
         $searchModel = new UserSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -54,6 +58,13 @@ class UserController extends Controller
 		if (\Yii::$app->user->isGuest) {
 			return $this->goHome();
 		}
+        $user = \Yii::$app->user->identity;
+        if ($id == null) {
+            $id = $user->getId();
+        }
+        if (!$user->admin && $user->getId() != $id) {
+            return $this->redirect('/site/denied');
+        }
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -106,8 +117,15 @@ EOT;
     public function actionUpdate($id)
     {
 		if (\Yii::$app->user->isGuest) {
-			//return $this->goHome();
+			return $this->goHome();
 		}
+        $user = \Yii::$app->user->identity;
+        if ($id == null) {
+            $id = $user->getId();
+        }
+        if (!$user->admin && $user->getId() != $id) {
+            return $this->redirect('/site/denied');
+        }
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -130,6 +148,10 @@ EOT;
 		if (\Yii::$app->user->isGuest) {
 			return $this->goHome();
 		}
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin) {
+            return $this->redirect('/site/denied');
+        }
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

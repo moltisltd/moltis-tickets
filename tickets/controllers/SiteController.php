@@ -28,7 +28,7 @@ class SiteController extends Controller {
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'logout' => ['post'],
+                    //'logout' => ['post'],
                 ],
             ],
         ];
@@ -49,6 +49,10 @@ class SiteController extends Controller {
     public function actionIndex() {
         \Stripe\Stripe::setApiKey(Yii::$app->params['stripeSecretKey']);
         return $this->render('event');
+    }
+
+    public function actionDenied() {
+        return $this->render('denied');
     }
 
     public function actionLogin() {

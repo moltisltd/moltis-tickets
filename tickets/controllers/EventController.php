@@ -32,6 +32,13 @@ class EventController extends Controller
      */
     public function actionIndex()
     {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        }
         $searchModel = new EventSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -48,8 +55,24 @@ class EventController extends Controller
      */
     public function actionView($id)
     {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
+        $model = $this->findModel($id);
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        } else if (!$user->admin) {
+            $organisations = $user->organisations;
+            foreach($organisations as $organisation) {
+                if ($model->owner_id == $organisation->id) {
+                    break 2;
+                }
+            }
+            return $this->redirect('/site/denied');
+        }
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
         ]);
     }
 
@@ -60,6 +83,13 @@ class EventController extends Controller
      */
     public function actionCreate()
     {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        }
         $model = new Event();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -79,7 +109,22 @@ class EventController extends Controller
      */
     public function actionUpdate($id)
     {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
         $model = $this->findModel($id);
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        } else if (!$user->admin) {
+            $organisations = $user->organisations;
+            foreach($organisations as $organisation) {
+                if ($model->owner_id == $organisation->id) {
+                    break 2;
+                }
+            }
+            return $this->redirect('/site/denied');
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -98,7 +143,23 @@ class EventController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
+        $model = $this->findModel($id);
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        } else if (!$user->admin) {
+            $organisations = $user->organisations;
+            foreach($organisations as $organisation) {
+                if ($model->owner_id == $organisation->id) {
+                    break 2;
+                }
+            }
+            return $this->redirect('/site/denied');
+        }
+        $model->delete();
 
         return $this->redirect(['index']);
     }

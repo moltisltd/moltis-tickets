@@ -30,8 +30,21 @@ class OrganisationController extends Controller {
      * @return mixed
      */
     public function actionIndex() {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
+        $query = Organisation::find();
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        } else if (!$user->admin) {
+            $organisations = $user->organisations;
+            foreach($organisations as $organisation) {
+                $query->orWhere(['id' => $organisation->id]);
+            }
+        }
         $dataProvider = new ActiveDataProvider([
-            'query' => Organisation::find(),
+            'query' => $query,
         ]);
 
         return $this->render('index', [
@@ -45,8 +58,24 @@ class OrganisationController extends Controller {
      * @return mixed
      */
     public function actionView($id) {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
+        $model = $this->findModel($id);
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        } else if (!$user->admin) {
+            $organisations = $user->organisations;
+            foreach($organisations as $organisation) {
+                if ($model->id == $organisation->id) {
+                    break 2;
+                }
+            }
+            return $this->redirect('/site/denied');
+        }
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+                    'model' => $model,
         ]);
     }
 
@@ -58,6 +87,21 @@ class OrganisationController extends Controller {
     public function actionConnect($code, $state) {
         $sql = "SELECT * FROM organisation WHERE SHA1(CONCAT(`id`, :salt, `name`)) = :state";
         $organisation = Organisation::findBySql($sql, [':salt' => 'jiejieugs9837', ':state' => $state])->one();
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        } else if (!$user->admin) {
+            $organisations = $user->organisations;
+            foreach($organisations as $org) {
+                if ($organisation->id == $org->id) {
+                    break 2;
+                }
+            }
+            return $this->redirect('/site/denied');
+        }
         if (!empty($code)) {
             $token_request_body = array(
                 'grant_type' => 'authorization_code',
@@ -111,7 +155,22 @@ class OrganisationController extends Controller {
      * @return mixed
      */
     public function actionUpdate($id) {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
         $model = $this->findModel($id);
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        } else if (!$user->admin) {
+            $organisations = $user->organisations;
+            foreach($organisations as $organisation) {
+                if ($model->id == $organisation->id) {
+                    break 2;
+                }
+            }
+            return $this->redirect('/site/denied');
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);

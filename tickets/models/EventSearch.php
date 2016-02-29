@@ -10,13 +10,12 @@ use app\models\Event;
 /**
  * EventSearch represents the model behind the search form about `app\models\Event`.
  */
-class EventSearch extends Event
-{
+class EventSearch extends Event {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['id', 'owner_id'], 'integer'],
             [['name', 'slug', 'start_time', 'end_time', 'description', 'summary'], 'safe'],
@@ -26,8 +25,7 @@ class EventSearch extends Event
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -39,9 +37,21 @@ class EventSearch extends Event
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = Event::find();
+        
+        if (\Yii::$app->user->isGuest) {
+            return null;
+        }
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return null;
+        } else if (!$user->admin) {
+            $organisations = $user->organisations;
+            foreach($organisations as $organisation) {
+                $query->orWhere(['owner_id' => $organisation->id]);
+            }
+        }
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -63,10 +73,11 @@ class EventSearch extends Event
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'slug', $this->slug])
-            ->andFilterWhere(['like', 'description', $this->description])
-            ->andFilterWhere(['like', 'summary', $this->summary]);
+                ->andFilterWhere(['like', 'slug', $this->slug])
+                ->andFilterWhere(['like', 'description', $this->description])
+                ->andFilterWhere(['like', 'summary', $this->summary]);
 
         return $dataProvider;
     }
+
 }
