@@ -28,6 +28,15 @@ class Email extends \yii\db\ActiveRecord {
 
     const EMAIL_UNSENT = 0x00;
     const EMAIL_SENT = 0x01;
+
+    public function init() {
+        $this->sender_name = 'Tixty';
+        $this->sender_email = \Yii::$app->params['adminEmail'];
+        $this->status = Email::EMAIL_UNSENT;
+        $this->created = date("Y-m-d H:i:s");
+        parent::init();
+    }
+
     /**
      * @inheritdoc
      */
@@ -103,13 +112,13 @@ class Email extends \yii\db\ActiveRecord {
         $bcc = "$cc_name <{$this->bcc_email}>";
         $sender_name = $this->sender_name ? $this->sender_name : $this->sender_email;
         $sender = "$sender_name <{$this->sender_email}>";
-        
+
         $headers[] = "MIME-Version: 1.0";
         $headers[] = "Content-type: text/html; charset=UTF-8";
         $headers[] = "From: $sender";
         $headers[] = "Reply-To: $sender";
-        $headers[] = "X-Mailer: PHP/".phpversion();
-        
+        $headers[] = "X-Mailer: PHP/" . phpversion();
+
         $sent = mail($to, $this->subject, $this->body, implode("\r\n", $headers));
         if ($sent) {
             $this->status = self::EMAIL_SENT;
@@ -122,4 +131,5 @@ class Email extends \yii\db\ActiveRecord {
     public static function validateEmail($email) {
         return filter_var($email, FILTER_VALIDATE_EMAIL);
     }
+
 }

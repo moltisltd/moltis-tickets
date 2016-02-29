@@ -58,7 +58,7 @@ class CartController extends \yii\web\Controller {
             
             $cart_lines = [];
             foreach ($cart->items as $item) {
-                $cart_lines[] = $item->ticket->name . ' x' . $item->quantity . ' @ ' . $item->ticket->ticket_price . ' each';
+                $cart_lines[] = $item->ticket->group->event->name . ': ' . $item->ticket->name . ' x' . $item->quantity . ' @ ' . $item->ticket->ticket_price . ' each';
             }
             $cart_lines[] = 'Card fees @ ' . $cart->stripe_fee;
             $cart_details = implode("\n", $cart_lines);
@@ -66,8 +66,6 @@ class CartController extends \yii\web\Controller {
             $email = new Email();
             $email->to_name = $user->name;
             $email->to_email = $user->email;
-            $email->sender_name = 'Tixty';
-            $email->sender_email = \Yii::$app->params['adminEmail'];
             $email->subject = "Your Tixty Purchase";
             $message = <<<EOT
 Hi {$user->name}!!
@@ -81,9 +79,23 @@ Tixty
 ---
 {$cart_details}
 EOT;
-            $email->body = $message;
-            $email->status = Email::EMAIL_UNSENT;
-            $email->created = date("Y-m-d H:i:s");
+            $email->body = nl2br($message);
+            $email->save();
+            $email->send();
+            
+            $email = new Email();
+            $email->to_name = "Tixty";
+            $email->to_email = \Yii::$app->params['adminEmail'];
+            $email->subject = "Tixty Purchase #{$cart->id}";
+            $message = <<<EOT
+{$user->name} just bought {$cart->quantity} tickets for a total of {$cart->total} - details below.
+
+Tixty
+
+---
+{$cart_details}
+EOT;
+            $email->body = nl2br($message);
             $email->save();
             $email->send();
         } catch (\Stripe\Error\Card $e) {

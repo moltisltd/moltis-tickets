@@ -1,3 +1,5 @@
 /nbproject/private/
 /web/
 /public_html/
+/tickets/config/db.php
+/tickets/config/params.php

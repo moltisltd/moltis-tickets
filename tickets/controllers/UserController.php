@@ -72,6 +72,23 @@ class UserController extends Controller
         $model = new User();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            
+            $email = new Email();
+            $email->to_name = $model->name;
+            $email->to_email = $model->email;
+            $email->subject = "Your Tixty Purchase";
+            $message = <<<EOT
+Hi {$model->name}!!
+
+You just registered as a user. Use {$model->email} to login with the password you chose and start buying tickets at <a href="https://tixty.co.uk/">tixty.co.uk</a>
+
+Thanks,
+
+Tixty
+EOT;
+            $email->body = nl2br($message);
+            $email->save();
+            $email->send();
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [

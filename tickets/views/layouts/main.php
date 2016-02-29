@@ -60,7 +60,7 @@ AppAsset::register($this);
 
         <footer class="footer">
             <div class="container">
-                <p class="pull-left">&copy; <a href="http://www.moltis.co.uk/">moltis</a> <?= date('Y') ?></p>
+                <p class="pull-left">&copy; <a href="http://www.moltis.co.uk/">moltis</a> <?= date('Y') ?>. If you encounter any problems, <a href="mailto:<?=\Yii::$app->params['adminEmail'];?>">email us</a>.</p>
 
                 <p class="pull-right">
                     <span id="siteseal"><script type="text/javascript" src="https://seal.godaddy.com/getSeal?sealID=uZwMgPMRvYrjlxEriv2bg9OlaWnsLfb9gBi8nxGdi2E4GZ5zUmHm18EA4tPB"></script></span>
