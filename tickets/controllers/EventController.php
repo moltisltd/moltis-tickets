@@ -77,6 +77,34 @@ class EventController extends Controller
     }
 
     /**
+     * Displays a single Event model.
+     * @param string $slug
+     * @return mixed
+     */
+    public function actionViewslug($slug)
+    {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
+        $model = $this->findModelBySlug($slug);
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        } else if (!$user->admin) {
+            $organisations = $user->organisations;
+            foreach($organisations as $organisation) {
+                if ($model->owner_id == $organisation->id) {
+                    break 2;
+                }
+            }
+            return $this->redirect('/site/denied');
+        }
+        return $this->render('view', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
      * Creates a new Event model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
@@ -174,6 +202,22 @@ class EventController extends Controller
     protected function findModel($id)
     {
         if (($model = Event::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    /**
+     * Finds the Event model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param string $slug
+     * @return Event the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModelBySlug($slug)
+    {
+        if (($model = Event::findOne(['slug' => $slug])) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

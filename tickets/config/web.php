@@ -38,13 +38,16 @@ $config = [
             ],
         ],
         'db' => require(__DIR__ . '/db.php'),
-        'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName' => true,
-            'enableStrictParsing' => false,
-            'rules' => [
-            // ...
-            ],
+		'urlManager' => [
+			'enablePrettyUrl' => true,
+			'showScriptName' => false,
+			'enableStrictParsing' => false,
+			'rules' => [
+				'event/<slug>' => 'event/viewslug',
+                'user/' => 'user/index',
+                'user/view/<id>' => 'user/view',
+                'user/update/<id>' => 'user/update',
+			],
         ],
     ],
     'params' => $params,
