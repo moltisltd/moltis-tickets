@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\Cart;
 use app\models\Organisation;
 use app\models\User;
+use app\models\Email;
 
 class CartController extends \yii\web\Controller {
 
@@ -54,6 +55,37 @@ class CartController extends \yii\web\Controller {
                         "destination" => Organisation::findOne(1)->stripe_user_id));
             $cart->status = Cart::CART_SOLD;
             $cart->save();
+            
+            $cart_lines = [];
+            foreach ($cart->items as $item) {
+                $cart_lines[] = $item->ticket->name . ' x' . $item->quantity . ' @ ' . $item->ticket->ticket_price . ' each';
+            }
+            $cart_lines[] = 'Card fees @ ' . $cart->stripe_fee;
+            $cart_details = implode("\n", $cart_lines);
+            
+            $email = new Email();
+            $email->to_name = $user->name;
+            $email->to_email = $user->email;
+            $email->sender_name = 'Tixty';
+            $email->sender_email = \Yii::$app->params['adminEmail'];
+            $email->subject = "Your Tixty Purchase";
+            $message = <<<EOT
+Hi {$user->name}!!
+
+You just bought {$cart->quantity} tickets for a total of {$cart->total} - details below.
+
+Thanks,
+
+Tixty
+
+---
+{$cart_details}
+EOT;
+            $email->body = $message;
+            $email->status = Email::EMAIL_UNSENT;
+            $email->created = date("Y-m-d H:i:s");
+            $email->save();
+            $email->send();
         } catch (\Stripe\Error\Card $e) {
             //card declined
         }

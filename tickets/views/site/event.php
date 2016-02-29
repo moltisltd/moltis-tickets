@@ -33,6 +33,7 @@ $this->title = $_event->owner->name . ' - ' . $_event->name;
                 $sold_count_all = 0;
                 $sold_count = [];
                 foreach ($group->tickets as $ticket) {
+                    $sold_count[$ticket->id] = 0;
                     foreach ($ticket->cartItems as $cartItems) {
                         if ($cartItems->cart->status == Cart::CART_SOLD) {
                             $sold_count_all += $cartItems->quantity;
