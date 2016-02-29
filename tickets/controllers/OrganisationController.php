@@ -4,6 +4,9 @@ namespace app\controllers;
 
 use Yii;
 use app\models\Organisation;
+use app\models\OrganisationMembers;
+use app\models\Email;
+use app\models\User;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -114,7 +117,7 @@ class OrganisationController extends Controller {
             curl_setopt($req, CURLOPT_POST, true);
             curl_setopt($req, CURLOPT_POSTFIELDS, http_build_query($token_request_body));
             curl_setopt($req, CURLOPT_SSL_VERIFYPEER, true);
-            curl_setopt($req, CURLOPT_CAINFO, "E:\doc\moltis-tickets\cacert.pem");
+            //curl_setopt($req, CURLOPT_CAINFO, '/home/web/tickets/cacert.pem');
             $respCode = curl_getinfo($req, CURLINFO_HTTP_CODE);
             $resp = json_decode(curl_exec($req), true);
             curl_close($req);
@@ -125,9 +128,36 @@ class OrganisationController extends Controller {
             $organisation->stripe_user_id = $resp['stripe_user_id'];
             $organisation->stripe_refresh_token = $resp['refresh_token'];
             $organisation->save();
+            
+            $organisation_test = Organisation::findOne($organisation->id);
+            $result = $organisation_test->stripe_user_id ? "successful" : "unsuccessful";
+            
+            $founder = User::findOne(OrganisationMembers::findOne(['organisation_id' => $organisation->id, 'founder' => 1])->user_id);
+            $email = new Email();
+            $email->to_name = $founder->name;
+            $email->to_email = $founder->email;
+            $email->subject = "Authorisation Attempt";
+            $email->body = <<<EOT
+You tried to connect {$organisation->name} to Tixty. That was {$result}.
+
+Tixty
+EOT;
+            $email->save();
+            $email->send();
+            
+            $response = print_r($resp, true);
+            $email = new Email();
+            $email->to_name = $email->sender_name;
+            $email->to_email = $email->sender_email;
+            $email->subject = "Authorisation Attempt for {$organisation->name} {$result}";
+            $email->body = <<<EOT
+<pre>{$response}</pre>
+EOT;
+            $email->save();
+            $email->send();
         }
-        return $this->render('connect', [
-                    'model' => $organisation,
+        return $this->redirect('/organisation/view', [
+                    'id' => $organisation->id,
         ]);
     }
 

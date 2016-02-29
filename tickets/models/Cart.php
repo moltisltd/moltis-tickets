@@ -73,14 +73,45 @@ class Cart extends \yii\db\ActiveRecord {
     }
 
     public function addItem($id) {
-        if (($cart_item = CartItems::findOne(['cart_id' => $this->id, 'ticket_id' => $id])) === null) {
-            $cart_item = new CartItems();
-            $cart_item->quantity = 0;
+        if ($this->status == self::CART_PENDING) {
+            if (($cart_item = CartItems::findOne(['cart_id' => $this->id, 'ticket_id' => $id])) === null) {
+                $cart_item = new CartItems();
+                $cart_item->quantity = 0;
+            }
+            $cart_item->cart_id = $this->id;
+            $cart_item->ticket_id = $id;
+            $cart_item->quantity++;
+            $cart_item->save();
+            $this->updateCart();
         }
-        $cart_item->cart_id = $this->id;
-        $cart_item->ticket_id = $id;
-        $cart_item->quantity++;
-        $cart_item->save();
+    }
+
+    public function removeItem($id) {
+        if ($this->status == self::CART_PENDING) {
+            if (($cart_item = CartItems::findOne(['cart_id' => $this->id, 'ticket_id' => $id]))) {
+                $cart_item->delete();
+                $this->updateCart();
+            }
+        }
+    }
+
+    public function reduceItem($id) {
+        if ($this->status == self::CART_PENDING) {
+            if (($cart_item = CartItems::findOne(['cart_id' => $this->id, 'ticket_id' => $id])) === null) {
+                return;
+            }
+            $cart_item->quantity--;
+            $cart_item->save();
+            $this->updateCart();
+            if ($cart_item->quantity == 0) {
+                $this->removeItem($id);
+            }
+        }
+    }
+
+    public function updateCart() {
+        $this->updated = date('Y-m-d H:i:s');
+        $this->save();
     }
 
     public function getItems() {

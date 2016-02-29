@@ -23,8 +23,16 @@ class CartController extends \yii\web\Controller {
         ]);
     }
 
-    public function actionRemove() {
-        return $this->render('remove');
+    public function actionRemove($id) {
+        $cart = Cart::getCurrentCart();
+        $cart->removeItem($id);
+        return $this->redirect('index');
+    }
+
+    public function actionReduce($id) {
+        $cart = Cart::getCurrentCart();
+        $cart->reduceItem($id);
+        return $this->redirect('index');
     }
 
     public function actionCharge() {
@@ -46,28 +54,30 @@ class CartController extends \yii\web\Controller {
         $cart = Cart::getCurrentCart();
         $cart->processCart();
         try {
-            $charge = \Stripe\Charge::create(array(
-                        "amount" => floor($cart->total * 100),
-                        "application_fee" => floor($cart->fees  * 100),
-                        "currency" => "gbp",
-                        "customer" => $customer->id,
-                        "description" => $cart->quantity . ' tickets',
-                        "destination" => Organisation::findOne(1)->stripe_user_id));
-            $cart->status = Cart::CART_SOLD;
-            $cart->save();
-            
-            $cart_lines = [];
-            foreach ($cart->items as $item) {
-                $cart_lines[] = $item->ticket->group->event->name . ': ' . $item->ticket->name . ' x' . $item->quantity . ' @ ' . $item->ticket->ticket_price . ' each';
-            }
-            $cart_lines[] = 'Card fees @ ' . $cart->stripe_fee;
-            $cart_details = implode("\n", $cart_lines);
-            
-            $email = new Email();
-            $email->to_name = $user->name;
-            $email->to_email = $user->email;
-            $email->subject = "Your Tixty Purchase";
-            $message = <<<EOT
+            $stripe_user_id = $cart->items[0]->ticket->group->event->owner->stripe_user_id;
+            if ($stripe_user_id) {
+                $charge = \Stripe\Charge::create(array(
+                            "amount" => floor($cart->total * 100),
+                            "application_fee" => floor($cart->fees * 100),
+                            "currency" => "gbp",
+                            "customer" => $customer->id,
+                            "description" => $cart->quantity . ' tickets',
+                            "destination" => $stripe_user_id));
+                $cart->status = Cart::CART_SOLD;
+                $cart->save();
+
+                $cart_lines = [];
+                foreach ($cart->items as $item) {
+                    $cart_lines[] = $item->ticket->group->event->name . ': ' . $item->ticket->name . ' x' . $item->quantity . ' @ ' . $item->ticket->ticket_price . ' each';
+                }
+                $cart_lines[] = 'Card fees @ ' . $cart->stripe_fee;
+                $cart_details = implode("\n", $cart_lines);
+
+                $email = new Email();
+                $email->to_name = $user->name;
+                $email->to_email = $user->email;
+                $email->subject = "Your Tixty Purchase";
+                $message = <<<EOT
 Hi {$user->name}!!
 
 You just bought {$cart->quantity} tickets for a total of {$cart->total} - details below.
@@ -79,15 +89,15 @@ Tixty
 ---
 {$cart_details}
 EOT;
-            $email->body = nl2br($message);
-            $email->save();
-            $email->send();
-            
-            $email = new Email();
-            $email->to_name = "Tixty";
-            $email->to_email = \Yii::$app->params['adminEmail'];
-            $email->subject = "Tixty Purchase #{$cart->id}";
-            $message = <<<EOT
+                $email->body = nl2br($message);
+                $email->save();
+                $email->send();
+
+                $email = new Email();
+                $email->to_name = "Tixty";
+                $email->to_email = \Yii::$app->params['adminEmail'];
+                $email->subject = "Tixty Purchase #{$cart->id}";
+                $message = <<<EOT
 {$user->name} just bought {$cart->quantity} tickets for a total of {$cart->total} - details below.
 
 Tixty
@@ -95,9 +105,10 @@ Tixty
 ---
 {$cart_details}
 EOT;
-            $email->body = nl2br($message);
-            $email->save();
-            $email->send();
+                $email->body = nl2br($message);
+                $email->save();
+                $email->send();
+            }
         } catch (\Stripe\Error\Card $e) {
             //card declined
         }
