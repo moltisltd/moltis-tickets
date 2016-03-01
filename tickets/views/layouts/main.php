@@ -7,8 +7,24 @@ use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
+use app\models\Cart;
 
 AppAsset::register($this);
+
+$navItems[] = ['label' => 'Home', 'url' => ['/site/index']];
+if (Yii::$app->user->isGuest) {
+    $navitems[] = ['label' => 'Login', 'url' => ['/site/login']];
+} else {
+    $cart = Cart::getCurrentCart();
+        $cart->processCart();
+    $navItems[] = ['label' => 'Cart' . ($cart->quantity ? ' (' . $cart->quantity . ')' : ''), 'url' => ['/cart']];
+    $navItems[] = ['label' => 'My Account', 'url' => ['/user/update']];
+    $navItems[] = [
+        'label' => 'Logout (' . Yii::$app->user->identity->name . ')',
+        'url' => ['/site/logout'],
+        'linkOptions' => ['data-method' => 'post']
+    ];
+}
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -34,16 +50,7 @@ AppAsset::register($this);
             ]);
             echo Nav::widget([
                 'options' => ['class' => 'navbar-nav navbar-right'],
-                'items' => [
-                    ['label' => 'Home', 'url' => ['/site/index']],
-                    Yii::$app->user->isGuest ?
-                            ['label' => 'Login', 'url' => ['/site/login']] :
-                            [
-                        'label' => 'Logout (' . Yii::$app->user->identity->name . ')',
-                        'url' => ['/site/logout'],
-                        'linkOptions' => ['data-method' => 'post']
-                            ],
-                ],
+                'items' => $navItems,
             ]);
             NavBar::end();
             ?>
@@ -60,7 +67,7 @@ AppAsset::register($this);
 
         <footer class="footer">
             <div class="container">
-                <p class="pull-left">&copy; <a href="http://www.moltis.co.uk/">moltis</a> <?= date('Y') ?>. If you encounter any problems, <a href="mailto:<?=\Yii::$app->params['adminEmail'];?>">email us</a>.</p>
+                <p class="pull-left">&copy; <a href="http://www.moltis.co.uk/">moltis</a> <?= date('Y') ?>. If you encounter any problems, <a href="mailto:<?= \Yii::$app->params['adminEmail']; ?>">email us</a>.</p>
 
                 <p class="pull-right">
                     <span id="siteseal"><script type="text/javascript" src="https://seal.godaddy.com/getSeal?sealID=uZwMgPMRvYrjlxEriv2bg9OlaWnsLfb9gBi8nxGdi2E4GZ5zUmHm18EA4tPB"></script></span>

@@ -2,6 +2,7 @@
 
 use app\models\Event;
 use app\models\Cart;
+use yii\helpers\Url;
 /* @var $this yii\web\View */
 
 $_event = Event::findOne(1);
@@ -18,9 +19,11 @@ $this->title = $_event->owner->name . ' - ' . $_event->name;
         <?php if (Yii::$app->user->isGuest) : ?>
         <p>
             If you're not registered, do so now or login:
-            <a href="<?= \yii\helpers\Url::to('user/create')?>" class="btn btn-warning">Register</a>
-            <a href="<?= \yii\helpers\Url::to('site/login')?>" class="btn btn-success">Login</a>
+            <a href="<?= Url::to('/user/create')?>" class="btn btn-warning">Register</a>
+            <a href="<?= Url::to('/site/login')?>" class="btn btn-success">Login</a>
         </p>
+        <?php else : ?>
+        <p>You're logged in! Add tickets to <a href="<?= Url::to('/cart')?>">your cart</a>!</p>
         <?php endif; ?>
         
         <?php
