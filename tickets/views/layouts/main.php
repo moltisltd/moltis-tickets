@@ -11,7 +11,7 @@ use app\models\Cart;
 
 AppAsset::register($this);
 
-$navItems[] = ['label' => 'Home', 'url' => ['/site/index']];
+$navItems[] = ['label' => 'Home', 'url' => ['/']];
 if (Yii::$app->user->isGuest) {
     $navitems[] = ['label' => 'Login', 'url' => ['/site/login']];
 } else {

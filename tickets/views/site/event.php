@@ -52,20 +52,29 @@ $this->title = $_event->owner->name . ' - ' . $_event->name;
             foreach ($group->tickets as $ticket) {
             ?>
             <div class="row">
-                <div class="col-lg-3">
+                <div class="col-md-3 col-xs-12">
                     <strong><?=$ticket->name?></strong>
                 </div>
-                <div class="col-lg-6">
+                <div class="col-md-5 col-xs-12">
                     <?=$ticket->description?>
                 </div>
-                <div class="col-lg-3 text-right">
+                <div class="col-md-1 col-xs-3 text-right">
                     &pound;<?=number_format($ticket->ticket_price)?>
-                    <?php if (Yii::$app->user->isGuest) : ?>
+                </div>
+                <div class="col-md-3 col-xs-9 text-right">
+                    <?php if ($ticket->sell_from > date('Y-m-d H:i:s')) : ?>
+                    Available from <?=date('d/m/y H:i', strtotime($ticket->sell_from));?>
+                    <?php elseif($ticket->sell_until < date('Y-m-d H:i:s')) : ?>
+                    No longer available
+                    <?php elseif (Yii::$app->user->isGuest) : ?>
                     <a href="<?= \yii\helpers\Url::to('site/login')?>" class="btn btn-success">Login</a>
                     <?php elseif ($group_sold_out || ($ticket->ticket_limit > 0 && $sold_count[$ticket->id] >= $ticket->ticket_limit)) : ?>
                     Sold out
                     <?php else : ?>
-                    <form style="display:inline-block" action="<?= \yii\helpers\Url::to('cart/add')?>" method="GET">
+                    <form class="form-inline" style="display:inline-block" action="<?= \yii\helpers\Url::to('cart/add')?>" method="GET">
+                        <?php if ($ticket->requires_access_code) : ?>
+                        <input class="form-control input-sm" type="text" name="access_code" placeholder="<?=Yii::t('app', 'Access Code')?>">
+                        <?php endif; ?>
                         <input type="hidden" name="id" value="<?=$ticket->id?>">
                         <button class="btn btn-sm btn-info" type="submit">Add to cart</button>
                     </form>

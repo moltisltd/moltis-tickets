@@ -3,6 +3,7 @@
 /* @var $cart app\models\Cart */
 
 use app\models\CartItems;
+use app\models\Session;
 use \yii\helpers\Url;
 
 $cartItems = CartItems::find()->where(['cart_id' => $cart->id]);
@@ -13,6 +14,14 @@ $dataProvider = new yii\data\ActiveDataProvider([
         ]);
 ?>
 <h1>Your cart</h1>
+<?php
+$session = new Session();
+$errors = $session->getErrors();
+$session->clearErrors();
+foreach ($errors as $e) {
+    ?><div class="alert alert-danger"><?=$e?></div><?
+}
+?>
 
 <?=
 yii\grid\GridView::widget([

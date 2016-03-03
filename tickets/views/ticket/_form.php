@@ -22,7 +22,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'ticket_fee')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'fee_included')->textInput() ?>
+    <?= $form->field($model, 'fee_included')->radioList(['0' => 'No', '1' => 'Yes']) ?>
 
     <?= $form->field($model, 'ticket_limit')->textInput() ?>
 
@@ -31,6 +31,8 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'sell_from')->textInput() ?>
 
     <?= $form->field($model, 'sell_until')->textInput() ?>
+
+    <?= $form->field($model, 'requires_access_code')->radioList(['0' => 'No', '1' => 'Yes']) ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

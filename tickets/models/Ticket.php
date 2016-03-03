@@ -18,6 +18,7 @@ use Yii;
  * @property string $description
  * @property string $sell_from
  * @property string $sell_until
+ * @property integer $requires_access_code
  */
 class Ticket extends \yii\db\ActiveRecord {
 
@@ -33,8 +34,8 @@ class Ticket extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['group_id', 'type_id', 'name', 'ticket_price', 'ticket_fee', 'fee_included', 'ticket_limit', 'description', 'sell_from', 'sell_until'], 'required'],
-            [['group_id', 'type_id', 'fee_included', 'ticket_limit'], 'integer'],
+            [['group_id', 'type_id', 'name', 'ticket_price', 'ticket_fee', 'fee_included', 'ticket_limit', 'description', 'sell_from', 'sell_until', 'requires_access_code'], 'required'],
+            [['group_id', 'type_id', 'fee_included', 'ticket_limit', 'requires_access_code'], 'integer'],
             [['ticket_price', 'ticket_fee'], 'number'],
             [['sell_from', 'sell_until'], 'safe'],
             [['name'], 'string', 'max' => 50],
@@ -58,6 +59,7 @@ class Ticket extends \yii\db\ActiveRecord {
             'description' => 'Ticket Description',
             'sell_from' => 'Start selling from',
             'sell_until' => 'Stop selling at',
+            'requires_access_code' => 'Requires Access Code',
         ];
     }
 
@@ -69,5 +71,8 @@ class Ticket extends \yii\db\ActiveRecord {
     }
     public function getCartItems() {
         return $this->hasMany(CartItems::className(), ['ticket_id' => 'id']);
+    }
+    public function getAccessCodes() {
+        return $this->hasMany(AccessCode::className(), ['ticket_id' => 'id']);
     }
 }

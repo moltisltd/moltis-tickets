@@ -3,13 +3,35 @@
 namespace app\controllers;
 
 use app\models\Cart;
-use app\models\Organisation;
 use app\models\User;
+use app\models\Ticket;
 use app\models\Email;
+use app\models\Session;
 
 class CartController extends \yii\web\Controller {
 
-    public function actionAdd($id) {
+    public function actionAdd($id, $access_code = null) {
+        $session = new Session();
+        if (!($ticket = Ticket::findOne($id))) {
+            $session->addError('Ticket does not exist');
+            return $this->redirect('index');
+        }
+        if ($ticket->requires_access_code && (count($ticket->accessCodes) == 0 || $access_code == null)) {
+            $session->addError('Access code required');
+            return $this->redirect('index');
+        } else if ($ticket->requires_access_code) {
+            $code_match = false;
+            foreach ($ticket->accessCodes as $code) {
+                if ($code->access_code == $access_code) {
+                    $code_match = true;
+                    break;
+                }
+            }
+            if (!$code_match) {
+                $session->addError('Valid access code required');
+                return $this->redirect('index');
+            }
+        }
         $cart = Cart::getCurrentCart();
         $cart->addItem($id);
         return $this->redirect('index');

@@ -34,11 +34,12 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'ticket_price',
             'ticket_fee',
-            'fee_included',
+            'fee_included:boolean',
             'ticket_limit',
             'description',
             'sell_from',
             'sell_until',
+            'requires_access_code:boolean'
         ],
     ]) ?>
 
