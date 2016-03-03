@@ -15,11 +15,12 @@ $dataProvider = new yii\data\ActiveDataProvider([
 ?>
 <h1>Your cart</h1>
 <?php
+
 $session = new Session();
 $errors = $session->getErrors();
 $session->clearErrors();
 foreach ($errors as $e) {
-    ?><div class="alert alert-danger"><?=$e?></div><?
+    ?><div class="alert alert-danger"><?= $e ?></div><?php
 }
 ?>
 
@@ -31,7 +32,7 @@ yii\grid\GridView::widget([
         [
             'attribute' => 'ticket_id',
             'content' => function($model, $index, $widget, $grid) {
-                return $model->ticket->group->name . ': ' . $model->ticket->name;
+                return $model->ticket->group->event->name . ': ' . $model->ticket->name;
             },
             'label' => 'Ticket',
         ],
@@ -65,7 +66,7 @@ yii\grid\GridView::widget([
         <div class="alert alert-info">
             <h3>
                 <?php if ($cart->quantity > 0) : ?>
-                    Your total: <?= $cart->quantity ?> tickets totalling <?= number_format($cart->subtotal, 2) ?> <small>(+ card fee of <?= number_format($cart->stripe_fee, 2) ?>)</small>
+                    Your total: <?= $cart->quantity ?> tickets totalling <?= number_format($cart->subtotal, 2) ?> <small>(+ card processing fee of <?= number_format($cart->stripe_fee, 2) ?>)</small>
                     <?php if ($cartItems->one()->ticket->group->event->owner->stripe_user_id) : ?>
                         <form style="display:inline-block;vertical-align:middle;margin-left:50px;" action="<?= Url::to('charge') ?>" method="GET">
                             <script

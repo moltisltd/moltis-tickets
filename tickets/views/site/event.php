@@ -59,7 +59,7 @@ $this->title = $_event->owner->name . ' - ' . $_event->name;
                     <?=$ticket->description?>
                 </div>
                 <div class="col-md-1 col-xs-3 text-right">
-                    &pound;<?=number_format($ticket->ticket_price)?>
+                    &pound;<?=number_format($ticket->ticket_price)?><small>*</small>
                 </div>
                 <div class="col-md-3 col-xs-9 text-right">
                     <?php if ($ticket->sell_from > date('Y-m-d H:i:s')) : ?>
@@ -86,6 +86,7 @@ $this->title = $_event->owner->name . ' - ' . $_event->name;
             }
         }
         ?>
+                <small>* You will be also be charged a card processing fee depending on your card type</small>
         </div>
 
     </div>

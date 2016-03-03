@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use app\models\User;
 use app\models\UserSearch;
+use app\models\Email;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -53,7 +54,7 @@ class UserController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id = null)
+    public function actionView($id)
     {
 		if (\Yii::$app->user->isGuest) {
 			return $this->goHome();
@@ -114,7 +115,7 @@ EOT;
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id = null)
+    public function actionUpdate($id)
     {
 		if (\Yii::$app->user->isGuest) {
 			return $this->goHome();
