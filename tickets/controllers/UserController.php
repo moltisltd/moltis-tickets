@@ -54,7 +54,7 @@ class UserController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id)
+    public function actionView($id = null)
     {
 		if (\Yii::$app->user->isGuest) {
 			return $this->goHome();
@@ -115,7 +115,7 @@ EOT;
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id = null)
     {
 		if (\Yii::$app->user->isGuest) {
 			return $this->goHome();
