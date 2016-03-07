@@ -13,7 +13,7 @@ AppAsset::register($this);
 
 $navItems[] = ['label' => 'Home', 'url' => ['/']];
 if (Yii::$app->user->isGuest) {
-    $navitems[] = ['label' => 'Login', 'url' => ['/site/login']];
+    $navItems[] = ['label' => 'Login', 'url' => ['/site/login']];
 } else {
     $cart = Cart::getCurrentCart();
         $cart->processCart();
