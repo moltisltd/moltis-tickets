@@ -46,8 +46,8 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     {
         return [
             'id' => 'User ID',
-            'name' => 'User Name',
-            'email' => 'User Email',
+            'name' => 'Name',
+            'email' => 'Email',
             'password' => 'Password',
             'customer_token' => 'Stripe Customer Token',
             'admin' => 'Admin flag',
