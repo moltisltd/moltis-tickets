@@ -10,9 +10,9 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * EventController implements the CRUD actions for Event model.
+ * EventsController implements the CRUD actions for Event model.
  */
-class EventController extends Controller
+class EventsController extends Controller
 {
     public function behaviors()
     {

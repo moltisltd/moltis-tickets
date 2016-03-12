@@ -12,9 +12,9 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'group_id')->textInput() ?>
+    <?= $form->field($model, 'group_id')->dropDownList(\app\models\TicketGroup::getList()) ?>
 
-    <?= $form->field($model, 'type_id')->textInput() ?>
+    <?= $form->field($model, 'type_id')->dropDownList(app\models\TicketType::getList()) ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 

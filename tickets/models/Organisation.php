@@ -56,4 +56,13 @@ class Organisation extends \yii\db\ActiveRecord {
     public function getMembers() {
         return $this->hasMany(OrganisationMembers::className(), ['organisation_id' => 'id']);
     }
+    
+    public static function getList() {
+        $list = [];
+        $items = self::find()->all();
+        foreach ($items as $i) {
+            $list[$i->id] = $i->name;
+        }
+        return $list;
+    }
 }

@@ -15,6 +15,7 @@ use Yii;
  * @property string $end_time
  * @property string $description
  * @property string $summary
+ * @property string $location_id
  */
 class Event extends \yii\db\ActiveRecord {
 
@@ -30,8 +31,9 @@ class Event extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['owner_id', 'name', 'slug', 'start_time', 'end_time', 'description', 'summary'], 'required'],
-            [['owner_id'], 'integer'],
+            ['id', 'default'],
+            [['owner_id', 'name', 'slug', 'start_time', 'end_time', 'description', 'summary', 'location_id'], 'required'],
+            [['owner_id', 'location_id'], 'integer'],
             [['start_time', 'end_time'], 'safe'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 255],
@@ -45,22 +47,37 @@ class Event extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'id' => 'Event ID',
-            'owner_id' => 'Owner Organisation ID',
-            'name' => 'Event Name',
-            'slug' => 'Event URL Slug',
-            'start_time' => 'Start time',
-            'end_time' => 'End time',
-            'description' => 'Description',
-            'summary' => 'Summary',
+            'id' => Yii::t('app', 'Event ID'),
+            'owner_id' => Yii::t('app', 'Owner Organisation'),
+            'name' => Yii::t('app', 'Name'),
+            'slug' => Yii::t('app', 'URL Slug'),
+            'start_time' => Yii::t('app', 'Start time'),
+            'end_time' => Yii::t('app', 'End time'),
+            'description' => Yii::t('app', 'Description'),
+            'summary' => Yii::t('app', 'Summary'),
+            'location_id' => Yii::t('app', 'Location'),
         ];
     }
 
     public function getOwner() {
         return $this->hasOne(Organisation::className(), ['id' => 'owner_id']);
     }
-    
+
     public function getTicketGroups() {
         return $this->hasMany(TicketGroup::className(), ['event_id' => 'id']);
     }
+
+    public function getLocation() {
+        return $this->hasOne(Location::className(), ['id', 'location_id']);
+    }
+
+    public static function getList() {
+        $list = [];
+        $items = self::find()->all();
+        foreach ($items as $i) {
+            $list[$i->id] = $i->name;
+        }
+        return $list;
+    }
+
 }

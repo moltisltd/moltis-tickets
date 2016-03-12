@@ -1,5 +1,7 @@
 <?php
 
+use app\models\Location;
+use app\models\Organisation;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -12,7 +14,7 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'owner_id')->textInput() ?>
+    <?= $form->field($model, 'owner_id')->dropDownList(Organisation::getList()) ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
@@ -25,6 +27,8 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
     <?= $form->field($model, 'summary')->textInput(['maxlength' => true]) ?>
+    
+    <?= $form->field($model, 'location_id')->dropDownList(Location::getList()) ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

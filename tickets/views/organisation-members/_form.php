@@ -12,11 +12,11 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'organisation_id')->textInput() ?>
+    <?= $form->field($model, 'organisation_id')->dropDownList(Organisation::getList()) ?>
 
-    <?= $form->field($model, 'user_id')->textInput() ?>
+    <?= $form->field($model, 'user_id')->dropDownList(User::getList()) ?>
 
-    <?= $form->field($model, 'founder')->textInput() ?>
+    <?= $form->field($model, 'founder')->radioList(['0' => 'No', '1' => 'Yes']) ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
