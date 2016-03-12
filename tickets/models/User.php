@@ -34,8 +34,9 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             [['name', 'email', 'password'], 'required'],
             [['name'], 'string', 'max' => 100],
             [['email'], 'string', 'max' => 255],
-            [['password'], 'string', 'max' => 100],
-            [['email'], 'unique']
+            [['password'], 'string', 'max' => 100, 'min' => 8],
+            [['email'], 'unique'],
+            ['email', 'email'],
         ];
     }
 
@@ -121,6 +122,9 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
+            if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+                return false;
+            }
             if ($this->isNewRecord) {
                 $this->access_token = \Yii::$app->security->generateRandomString();
 				$this->password = \Yii::$app->security->generatePasswordHash($this->password);
