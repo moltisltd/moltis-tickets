@@ -23,8 +23,18 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'group_id',
-            'type_id',
+            [
+                'attribute' => 'group_id',
+                'value' => function($data) {
+                    return app\models\TicketGroup::findOne($data->group_id)->name;
+                }
+            ],
+            [
+                'attribute' => 'type_id',
+                'value' => function($data) {
+                    return app\models\TicketType::findOne($data->type_id)->name;
+                }
+            ],
             'name',
             'ticket_price',
             // 'ticket_fee',

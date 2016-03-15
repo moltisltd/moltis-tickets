@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use app\models\TicketGroup;
+use app\models\TicketType;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Ticket */
@@ -12,9 +14,9 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'group_id')->dropDownList(\app\models\TicketGroup::getList()) ?>
+    <?= $form->field($model, 'group_id')->dropDownList(TicketGroup::getList()) ?>
 
-    <?= $form->field($model, 'type_id')->dropDownList(app\models\TicketType::getList()) ?>
+    <?= $form->field($model, 'type_id')->dropDownList(TicketType::getList()) ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
