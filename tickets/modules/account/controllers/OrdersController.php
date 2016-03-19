@@ -16,7 +16,7 @@ class OrdersController extends Controller {
         $user = \Yii::$app->user->identity;
         $user = User::findOne($user->getId());
         $query = $user->getCarts();
-        $query->where(['id' => [Cart::CART_SOLD, Cart::CART_REFUNDED]]);
+        $query->where(['status' => [Cart::CART_SOLD, Cart::CART_REFUNDED]]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
