@@ -38,7 +38,12 @@ class Event extends \yii\db\ActiveRecord {
             [['description'], 'string'],
             [['name'], 'string', 'max' => 255],
             [['slug'], 'string', 'max' => 100],
-            [['summary'], 'string', 'max' => 500]
+            [['summary'], 'string', 'max' => 500],
+            ['end_time', function($attribute, $params) {
+                    if ($this->end_time <= $this->start_time) {
+                        $this->addError($attribute, Yii::t('app', 'End time must be later than start time'));
+                    }
+                }],
         ];
     }
 
@@ -68,7 +73,7 @@ class Event extends \yii\db\ActiveRecord {
     }
 
     public function getLocation() {
-        return $this->hasOne(Location::className(), ['id', 'location_id']);
+        return $this->hasOne(Location::className(), ['id' => 'location_id']);
     }
 
     public static function getList() {

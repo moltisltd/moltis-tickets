@@ -39,7 +39,12 @@ class Ticket extends \yii\db\ActiveRecord {
             [['ticket_price', 'ticket_fee'], 'number'],
             [['sell_from', 'sell_until'], 'safe'],
             [['name'], 'string', 'max' => 50],
-            [['description'], 'string', 'max' => 255]
+            [['description'], 'string', 'max' => 255],
+            ['sell_until', function($attribute, $params) {
+                if($this->sell_until <= $this->sell_from) {
+                    $this->addError($attribute, Yii::t('app','Sell until time must be later than sell from time'));
+                }
+            }],
         ];
     }
 
@@ -48,18 +53,18 @@ class Ticket extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'id' => 'Ticket ID',
-            'group_id' => 'Ticket Group ID',
-            'type_id' => 'Ticket Type ID',
-            'name' => 'Ticket Name',
-            'ticket_price' => 'Ticket price',
-            'ticket_fee' => 'Ticket Fee',
-            'fee_included' => 'Is fee included in price?',
-            'ticket_limit' => 'Tickets available',
-            'description' => 'Ticket Description',
-            'sell_from' => 'Start selling from',
-            'sell_until' => 'Stop selling at',
-            'requires_access_code' => 'Requires Access Code',
+            'id' => Yii::t('app', 'Ticket ID'),
+            'group_id' => Yii::t('app', 'Ticket Group ID'),
+            'type_id' => Yii::t('app', 'Ticket Type ID'),
+            'name' => Yii::t('app', 'Ticket Name'),
+            'ticket_price' => Yii::t('app', 'Ticket price'),
+            'ticket_fee' => Yii::t('app', 'Ticket Fee'),
+            'fee_included' => Yii::t('app', 'Is fee included in price?'),
+            'ticket_limit' => Yii::t('app', 'Tickets available'),
+            'description' => Yii::t('app', 'Ticket Description'),
+            'sell_from' => Yii::t('app', 'Start selling from'),
+            'sell_until' => Yii::t('app', 'Stop selling at'),
+            'requires_access_code' => Yii::t('app', 'Requires Access Code'),
         ];
     }
 

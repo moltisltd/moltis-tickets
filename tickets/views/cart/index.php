@@ -12,10 +12,10 @@ $cart->processCart();
 $dataProvider = new yii\data\ActiveDataProvider([
     'query' => $cartItems,
         ]);
+$formatter = \Yii::$app->formatter;
 ?>
 <h1>Your cart</h1>
 <?php
-
 $session = new Session();
 $errors = $session->getErrors();
 $session->clearErrors();
@@ -49,14 +49,14 @@ yii\grid\GridView::widget([
                         return $model->ticket->ticket_price;
                     },
                     'label' => 'Price',
-                    'format' => ['decimal', 2],
+                    'format' => 'currency',
                 ],
                 [
                     'content' => function($model, $index, $widget, $grid) {
                         return $model->ticket->ticket_price * $model->quantity;
                     },
                     'label' => 'Total',
-                    'format' => ['decimal', 2],
+                    'format' => 'currency',
                     'contentOptions' => ['class' => 'text-right'],
                     'headerOptions' => ['class' => 'text-right'],
                 ],
@@ -66,7 +66,7 @@ yii\grid\GridView::widget([
         <div class="alert alert-info">
             <h3>
                 <?php if ($cart->quantity > 0) : ?>
-                    Your total: <?= $cart->quantity ?> tickets totalling <?= number_format($cart->subtotal, 2) ?> <small>(+ card processing fee of <?= number_format($cart->stripe_fee, 2) ?>)</small>
+                Your total: <?= $cart->quantity ?> tickets totalling <?= $formatter->asCurrency($cart->subtotal) ?> <small>(+ card processing fee of <?= $formatter->asCurrency($cart->stripe_fee) ?>)</small>
                     <?php if ($cartItems->one()->ticket->group->event->owner->stripe_user_id) : ?>
                         <form style="display:inline-block;vertical-align:middle;margin-left:50px;" action="<?= Url::to('charge') ?>" method="GET">
                             <script

@@ -12,21 +12,19 @@ use Yii;
  * @property string $name
  * @property integer $ticket_limit
  */
-class TicketGroup extends \yii\db\ActiveRecord
-{
+class TicketGroup extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'ticket_group';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['event_id', 'name', 'ticket_limit'], 'required'],
             [['event_id', 'ticket_limit'], 'integer'],
@@ -37,8 +35,7 @@ class TicketGroup extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => 'Ticket Group ID',
             'event_id' => 'Event ID',
@@ -46,22 +43,25 @@ class TicketGroup extends \yii\db\ActiveRecord
             'ticket_limit' => 'Tickets Available',
         ];
     }
-    
-    public function getEvent()
-    {
+
+    public function getEvent() {
         return $this->hasOne(Event::className(), ['id' => 'event_id']);
     }
-    
+
     public function getTickets() {
         return $this->hasMany(Ticket::className(), ['group_id' => 'id']);
     }
-    
+
     public static function getList() {
         $list = [];
         $items = self::find()->all();
         foreach ($items as $i) {
-            $list[$i->id] = $i->name;
+            $event = $i->getEvent()->one();
+            if ($event->start_time > date('Y-m-d H:i:s')) {
+                $list[$i->id] = $event->name . ': ' . $i->name;
+            }
         }
         return $list;
     }
+
 }

@@ -50,12 +50,12 @@ class Cart extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'id' => 'Cart ID',
-            'customer_id' => 'Customer User ID',
-            'session_id' => 'Session ID',
-            'created' => 'Time created',
-            'updated' => 'Time last updated',
-            'status' => 'Status',
+            'id' => Yii::t('app', 'Cart ID'),
+            'customer_id' => Yii::t('app', 'Customer User ID'),
+            'session_id' => Yii::t('app', 'Session ID'),
+            'created' => Yii::t('app', 'Time created'),
+            'updated' => Yii::t('app', 'Last updated'),
+            'status' => Yii::t('app', 'Status'),
         ];
     }
 
@@ -119,7 +119,7 @@ class Cart extends \yii\db\ActiveRecord {
     }
 
     public function getCustomer() {
-        return $this->hasOne(User::className(), ['id', 'customer_id']);
+        return $this->hasOne(User::className(), ['id' => 'customer_id']);
     }
 
     public function processCart() {
@@ -134,6 +134,15 @@ class Cart extends \yii\db\ActiveRecord {
         $this->stripe_fee = round(0.015 * $this->subtotal + 0.2, 2);
         $this->fees += $this->stripe_fee;
         $this->total = $this->subtotal + $this->stripe_fee;
+    }
+
+    public function displayStatus() {
+        switch ($this->status) {
+            default:
+            case self::CART_PENDING: return Yii::t('app', 'Pending');
+            case self::CART_SOLD: return Yii::t('app', 'Completed');
+            case self::CART_REFUNDED: return Yii::t('app', 'Refunded');
+        }
     }
 
 }

@@ -16,9 +16,9 @@ if (Yii::$app->user->isGuest) {
     $navItems[] = ['label' => 'Login', 'url' => ['/site/login']];
 } else {
     $cart = Cart::getCurrentCart();
-        $cart->processCart();
+    $cart->processCart();
     $navItems[] = ['label' => 'Cart' . ($cart->quantity ? ' (' . $cart->quantity . ')' : ''), 'url' => ['/cart']];
-    $navItems[] = ['label' => 'My Account', 'url' => ['/user/update']];
+    $navItems[] = ['label' => 'My Account', 'url' => ['/account']];
     $navItems[] = [
         'label' => 'Logout (' . Yii::$app->user->identity->name . ')',
         'url' => ['/site/logout'],
@@ -67,7 +67,10 @@ if (Yii::$app->user->isGuest) {
 
         <footer class="footer">
             <div class="container">
-                <p class="pull-left">&copy; <a href="http://www.moltis.co.uk/">moltis</a> <?= date('Y') ?>. If you encounter any problems, <a href="mailto:<?= \Yii::$app->params['adminEmail']; ?>">email us</a>.</p>
+                <p class="pull-left">
+                    &copy; <a href="http://www.moltis.co.uk/">moltis</a> <?= date('Y') ?>.
+                    <?= Yii::t('app', 'If you encounter any problems, {email}.', ['email' => Html::a(Yii::t('app', 'email us'), 'mailto:' . \Yii::$app->params['adminEmail'])]); ?>
+                </p>
 
                 <p class="pull-right">
                     <span id="siteseal"><script type="text/javascript" src="https://seal.godaddy.com/getSeal?sealID=uZwMgPMRvYrjlxEriv2bg9OlaWnsLfb9gBi8nxGdi2E4GZ5zUmHm18EA4tPB"></script></span>

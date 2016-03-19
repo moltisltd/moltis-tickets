@@ -1,6 +1,8 @@
 <?php
 
 $params = require(__DIR__ . '/params.php');
+$params['adminEmail'] = 'tixty@tixty.co.uk';
+$params['ticketFee'] = 0.50;
 
 $config = [
     'id' => 'basic',
@@ -38,19 +40,28 @@ $config = [
             ],
         ],
         'db' => require(__DIR__ . '/db.php'),
-		'urlManager' => [
-			'enablePrettyUrl' => true,
-			'showScriptName' => false,
-			'enableStrictParsing' => false,
-			'rules' => [
-				'event/<slug>' => 'events/viewslug',
-                'user/' => 'user/index',
-                'user/view/<id>' => 'user/view',
-                'user/update/<id>' => 'user/update',
-			],
+        'urlManager' => [
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'enableStrictParsing' => false,
+            'rules' => [
+                'event/<slug>' => 'events/viewslug',
+                'login' => 'site/login',
+                'register' => 'user/create',
+            ],
+        ],
+        'formatter' => [
+            'class' => 'yii\i18n\Formatter',
+            'currencyCode' => '&pound;',
+        ]
+    ],
+    'sourceLanguage' => 'en-GB',
+    'params' => $params,
+    'modules' => [
+        'account' => [
+            'class' => 'app\modules\account\Module',
         ],
     ],
-    'params' => $params,
 ];
 
 if (YII_ENV_DEV) {

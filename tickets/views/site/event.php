@@ -2,30 +2,36 @@
 
 use app\models\Event;
 use app\models\Cart;
-use yii\helpers\Url;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 
 $_event = Event::findOne(1);
+$location = $_event->getLocation()->one();
+$formatter = Yii::$app->formatter;
 
 $this->title = $_event->owner->name . ' - ' . $_event->name;
 ?>
 <div class="site-index">
 
     <h1><?= $this->title; ?></h1>
-    <h3><?= date('jS F Y', strtotime($_event->start_time)) ?> - <?= date('jS F Y', strtotime($_event->end_time)) ?></h3>
+    <h2><?= $formatter->asDate(strtotime($_event->start_time)) ?> - <?= $formatter->asDate(strtotime($_event->end_time)) ?></h2>
+    <h3><?= Yii::t('app', '{name}, {address}, {postcode}', ['name' => $location->name, 'address' => $location->address, 'postcode' => $location->postcode]) ?></h3>
 
     <p><?= $_event->description ?></p>
     <hr>
     <div class="body-content">
         <?php if (Yii::$app->user->isGuest) : ?>
             <p>
-                If you're not registered, do so now or login:
-                <a href="<?= Url::to('/user/create') ?>" class="btn btn-warning">Register</a>
-                <a href="<?= Url::to('/site/login') ?>" class="btn btn-success">Login</a>
+                <?=
+                Yii::t('app', "If you're not registered, do so now or login: {register} {login}", [
+                    'register' => Html::a(Yii::t('app', 'Register'), ['/register'], ['class' => 'btn btn-warning']),
+                    'login' => Html::a(Yii::t('app', 'Login'), ['/login'], ['class' => 'btn btn-success'])
+                ]);
+                ?>
             </p>
         <?php else : ?>
-            <p>You're logged in! Add tickets to <a href="<?= Url::to('/cart') ?>">your cart</a>!</p>
+            <p><?= Yii::t('app', "You're logged in! Add tickets to {cartbtn}!", ['cartbtn' => Html::a(Yii::t('app', 'your cart'), ['/cart'])]) ?></p>
         <?php endif; ?>
 
         <?php
@@ -61,17 +67,17 @@ $this->title = $_event->owner->name . ' - ' . $_event->name;
                         <?= $ticket->description ?>
                     </div>
                     <div class="col-md-1 col-xs-3 text-right">
-                        &pound;<?= number_format($ticket->ticket_price) ?><small>*</small>
+                        <?= Yii::$app->formatter->asCurrency($ticket->ticket_price) ?><small>*</small>
                     </div>
                     <div class="col-md-3 col-xs-9 text-right">
                         <?php if ($ticket->sell_from > date('Y-m-d H:i:s')) : ?>
-                            Available from <?= date('d/m/y H:i', strtotime($ticket->sell_from)); ?>
+                            <?= Yii::t('app', 'Available from {sellfrom}', ['sellfrom' => date('d/m/y H:i', strtotime($ticket->sell_from))]); ?>
                         <?php elseif ($ticket->sell_until < date('Y-m-d H:i:s')) : ?>
-                            No longer available
+                            <?= Yii::t('app', 'No longer available'); ?>
                         <?php elseif (Yii::$app->user->isGuest) : ?>
                             <a href="<?= \yii\helpers\Url::to('site/login') ?>" class="btn btn-success">Login</a>
                         <?php elseif ($group_sold_out || ($ticket->ticket_limit > 0 && $sold_count[$ticket->id] >= $ticket->ticket_limit)) : ?>
-                            Sold out
+                            <?= Yii::t('app', 'Sold out'); ?>
                         <?php else : ?>
                             <form class="form-inline" style="display:inline-block" action="<?= \yii\helpers\Url::to('cart/add') ?>" method="GET">
                                 <?php if ($ticket->requires_access_code) : ?>
@@ -88,8 +94,7 @@ $this->title = $_event->owner->name . ' - ' . $_event->name;
             }
         }
         ?>
-        <small>* You will be also be charged a card processing fee depending on your card type</small>
+        <small>* <?= Yii::t('app', 'You will be also be charged a card processing fee depending on your card type') ?></small>
     </div>
-
 </div>
 </div>

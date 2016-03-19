@@ -22,7 +22,11 @@ use app\models\TicketType;
 
     <?= $form->field($model, 'ticket_price')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'ticket_fee')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'ticket_fee')->hiddenInput(['value' => Yii::$app->params['ticketFee']])->label(false) ?>
+    <div class="form-group">
+        <label class="control-label"><?= Yii::t('app', 'Ticket Fee') ?></label>
+        <div class="form-control-static"><?= \Yii::$app->formatter->asCurrency(Yii::$app->params['ticketFee']) ?></div>
+    </div>
 
     <?= $form->field($model, 'fee_included')->radioList(['0' => 'No', '1' => 'Yes']) ?>
 
