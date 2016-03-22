@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use Yii;
 use app\models\Cart;
 use app\models\User;
 use app\models\Ticket;
@@ -13,11 +14,11 @@ class CartController extends \yii\web\Controller {
     public function actionAdd($id, $access_code = null) {
         $session = new Session();
         if (!($ticket = Ticket::findOne($id))) {
-            $session->addError('Ticket does not exist');
+            $session->addError(Yii::t('app', 'Ticket does not exist'));
             return $this->redirect('index');
         }
         if ($ticket->requires_access_code && (count($ticket->accessCodes) == 0 || $access_code == null)) {
-            $session->addError('Access code required');
+            $session->addError(Yii::t('app', 'Access code required'));
             return $this->redirect('index');
         } else if ($ticket->requires_access_code) {
             $code_match = false;
@@ -28,12 +29,13 @@ class CartController extends \yii\web\Controller {
                 }
             }
             if (!$code_match) {
-                $session->addError('Valid access code required');
+                $session->addError(Yii::t('app', 'Valid access code required'));
                 return $this->redirect('index');
             }
         }
         $cart = Cart::getCurrentCart();
         $cart->addItem($id);
+        $session->addSuccess(Yii::t('app', 'Ticket added'));
         return $this->redirect('index');
     }
 
@@ -48,16 +50,21 @@ class CartController extends \yii\web\Controller {
     public function actionRemove($id) {
         $cart = Cart::getCurrentCart();
         $cart->removeItem($id);
+        $session = new Session();
+        $session->addSuccess(Yii::t('app', 'Ticket removed'));
         return $this->redirect('index');
     }
 
     public function actionReduce($id) {
         $cart = Cart::getCurrentCart();
         $cart->reduceItem($id);
+        $session = new Session();
+        $session->addSuccess(Yii::t('app', 'Ticket quantity reduced'));
         return $this->redirect('index');
     }
 
     public function actionCharge() {
+        $session = new Session();
         \Stripe\Stripe::setApiKey(\Yii::$app->params['stripeSecretKey']);
         $get = \Yii::$app->request->get();
         $token = $get['stripeToken'];
@@ -87,6 +94,7 @@ class CartController extends \yii\web\Controller {
                             "destination" => $stripe_user_id));
                 $cart->status = Cart::CART_SOLD;
                 $cart->save();
+                $session->addSuccess(Yii::t('app', 'Tickets bought!'));
 
                 $cart_lines = [];
                 foreach ($cart->items as $item) {
@@ -133,6 +141,7 @@ EOT;
             }
         } catch (\Stripe\Error\Card $e) {
             //card declined
+            $session->addError(Yii::t('app', 'Looks like your card was declined or some other error happened'));
         }
 
         return $this->redirect('index');

@@ -34,9 +34,13 @@ class OrdersController extends Controller {
         if (\Yii::$app->user->isGuest) {
             return $this->goHome();
         }
-        return $this->render('view', [
-                    'model' => $this->findModel($id),
-        ]);
+        if (($model = $this->findModel($id))) {
+            return $this->render('view', [
+                        'model' => $model,
+            ]);
+        } else {
+            return $this->redirect('/site/denied/');
+        }
     }
 
     /**
@@ -47,11 +51,12 @@ class OrdersController extends Controller {
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id) {
-        if (($model = Cart::findOne($id)) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
+        $where = ['id' => $id, 'status' => [Cart::CART_SOLD, Cart::CART_REFUNDED]];
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin) {
+            $where['customer_id'] = $user->getId();
         }
+        return Cart::findOne($where);
     }
 
 }

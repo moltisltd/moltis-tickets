@@ -18,11 +18,16 @@ $this->params['breadcrumbs'][] = $this->title;
     GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
-            'id',
+            [
+                'attribute' => 'id',
+                'content' => function($data) {
+                    return str_pad($data->id, 5, '0', STR_PAD_LEFT);
+                }
+            ],
             [
                 'attribute' => 'updated',
                 'format' => 'dateTime',
-                ],
+            ],
             [
                 'attribute' => 'status',
                 'value' => function($data) {
@@ -36,13 +41,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $data->quantity;
                 },
             ],
-                    [
-                        'attribute' => 'total',
+            [
+                'attribute' => 'total',
                 'value' => function($data) {
                     $data->processCart();
                     return $data->total;
                 },
-                    ],
+            ],
             [
                 'content' => function($data) {
                     return Html::a(Yii::t('app', 'View'), ['view', 'id' => $data->id], ['class' => 'btn btn-primary']);

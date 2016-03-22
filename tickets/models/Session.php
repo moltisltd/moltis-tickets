@@ -39,7 +39,7 @@ class Session extends \yii\base\Model {
         $this->_session->get(self::KEY_SUCCESS)->append($message);
     }
 
-    public function getSuccess() {
+    public function getSuccesses() {
         return $this->_session->get(self::KEY_SUCCESS);
     }
 

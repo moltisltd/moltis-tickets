@@ -14,7 +14,7 @@ $dataProvider = new ActiveDataProvider([
         ]);
 $model->processCart();
 
-$this->title = Yii::t('app', 'My Order: #{cartid}', ['cartid' => str_pad($model->id, 5, "0")]);
+$this->title = Yii::t('app', 'My Order: #{cartid}', ['cartid' => str_pad($model->id, 5, '0', STR_PAD_LEFT)]);
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'My Account'), 'url' => ['/account']];
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'My Orders'), 'url' => ['/account/orders']];
 $this->params['breadcrumbs'][] = $this->title;
