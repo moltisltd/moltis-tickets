@@ -93,6 +93,8 @@ class CartController extends \yii\web\Controller {
                             "description" => $cart->quantity . ' tickets',
                             "destination" => $stripe_user_id));
                 $cart->status = Cart::CART_SOLD;
+                $cart->charge_id = $charge->id;
+                $cart->charge_details = json_encode($charge);
                 $cart->save();
                 $session->addSuccess(Yii::t('app', 'Tickets bought!'));
 

@@ -13,6 +13,8 @@ use Yii;
  * @property string $created
  * @property string $updated
  * @property integer $status
+ * @property string $charge_id
+ * @property string $charge_details
  */
 class Cart extends \yii\db\ActiveRecord {
 
@@ -41,7 +43,7 @@ class Cart extends \yii\db\ActiveRecord {
             [['customer_id', 'session_id', 'created', 'status'], 'required'],
             [['customer_id', 'status'], 'integer'],
             [['created', 'updated'], 'safe'],
-            [['session_id'], 'string', 'max' => 100]
+            [['session_id', 'charge_id'], 'string', 'max' => 100]
         ];
     }
 
@@ -60,7 +62,7 @@ class Cart extends \yii\db\ActiveRecord {
     }
 
     public static function getCurrentCart() {
-        if (($cart = self::findOne(['customer_id' => \Yii::$app->user->identity->id, 'session_id' => session_id(), 'status' => self::CART_PENDING])) !== null) {
+        if (($cart = self::findOne(['customer_id' => \Yii::$app->user->identity->id, 'status' => self::CART_PENDING])) !== null) {
             return $cart;
         }
         $cart = new Cart();
