@@ -90,4 +90,6 @@ yii\grid\GridView::widget([
                     <?= Yii::t('app', 'Nothing in here! {home}', ['home' => Html::a(Yii::t('app', 'Go pick some tickets'), ['/'])]); ?>
                 <?php endif; ?>
     </h3>
+        <br><br>
+        <small><?= Yii::t('app', 'Kaspersky Anti-Virus may block your ability to use the cart system. If this happens, you may need to use an alternate device (Tixty is mobile-friendly) or temporarily disable Kaspersky.') ?></small>
 </div>

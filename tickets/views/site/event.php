@@ -10,7 +10,7 @@ $_event = Event::findOne(1);
 $location = $_event->getLocation()->one();
 $formatter = Yii::$app->formatter;
 
-$this->title = $_event->owner->name . ' - ' . $_event->name;
+$this->title = Yii::t('app', '{owner} - {event}', ['owner' => $_event->owner->name, 'event' => $_event->name]);
 ?>
 <div class="site-index">
 
@@ -66,10 +66,10 @@ $this->title = $_event->owner->name . ' - ' . $_event->name;
                     <div class="col-md-5 col-xs-12">
                         <?= $ticket->description ?>
                     </div>
-                    <div class="col-md-1 col-xs-3 text-right">
+                    <div class="col-md-1 col-xs-5 text-right">
                         <?= Yii::$app->formatter->asCurrency($ticket->ticket_price) ?><small>*</small>
                     </div>
-                    <div class="col-md-3 col-xs-9 text-right">
+                    <div class="col-md-3 col-xs-7 text-right">
                         <?php if ($ticket->sell_from > date('Y-m-d H:i:s')) : ?>
                             <?= Yii::t('app', 'Available from {sellfrom}', ['sellfrom' => date('d/m/y H:i', strtotime($ticket->sell_from))]); ?>
                         <?php elseif ($ticket->sell_until < date('Y-m-d H:i:s')) : ?>
@@ -95,6 +95,8 @@ $this->title = $_event->owner->name . ' - ' . $_event->name;
         }
         ?>
         <small>* <?= Yii::t('app', 'You will be also be charged a card processing fee depending on your card type') ?></small>
+        <br><br>
+        <small><?= Yii::t('app', 'Kaspersky Anti-Virus may block your ability to use the cart system. If this happens, you may need to use an alternate device (Tixty is mobile-friendly) or temporarily disable Kaspersky.') ?></small>
     </div>
 </div>
 </div>
