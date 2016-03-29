@@ -1,6 +1,5 @@
 <?php
 
-use Yii;
 use app\models\Event;
 use app\models\Cart;
 use yii\helpers\Html;

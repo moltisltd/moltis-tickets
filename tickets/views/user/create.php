@@ -1,13 +1,12 @@
 <?php
 
-use Yii;
 use yii\helpers\Html;
 
 
 /* @var $this yii\web\View */
 /* @var $model app\models\User */
 
-$this->title = Yii('app', 'Register');
+$this->title = Yii::t('app', 'Register');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-create">
