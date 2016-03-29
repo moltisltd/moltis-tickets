@@ -2,6 +2,7 @@
 /* @var $this yii\web\View */
 /* @var $cart app\models\Cart */
 
+use Yii;
 use app\models\CartItems;
 use app\models\Session;
 use \yii\helpers\Url;
