@@ -15,7 +15,7 @@ $this->title = Yii::t('app', '{owner} - {event}', ['owner' => $_event->owner->na
 <div class="site-index">
 
     <h1><?= $this->title; ?></h1>
-    <h2><?= $formatter->asDate(strtotime($_event->start_time)) ?> - <?= $formatter->asDate(strtotime($_event->end_time)) ?></h2>
+    <h2><?= $formatter->asDate($_event->start_time) ?> - <?= $formatter->asDate($_event->end_time) ?></h2>
     <h3><?= Yii::t('app', '{name}, {address}, {postcode}', ['name' => $location->name, 'address' => $location->address, 'postcode' => $location->postcode]) ?></h3>
 
     <p><?= $_event->description ?></p>
@@ -71,7 +71,7 @@ $this->title = Yii::t('app', '{owner} - {event}', ['owner' => $_event->owner->na
                     </div>
                     <div class="col-md-3 col-xs-7 text-right">
                         <?php if ($ticket->sell_from > date('Y-m-d H:i:s')) : ?>
-                            <?= Yii::t('app', 'Available from {sellfrom}', ['sellfrom' => date('d/m/y H:i', strtotime($ticket->sell_from))]); ?>
+                            <?= Yii::t('app', 'Available from {sellfrom}', ['sellfrom' => $formatter->asDateTime($ticket->sell_from)]); ?>
                         <?php elseif ($ticket->sell_until < date('Y-m-d H:i:s')) : ?>
                             <?= Yii::t('app', 'No longer available'); ?>
                         <?php elseif (Yii::$app->user->isGuest) : ?>
