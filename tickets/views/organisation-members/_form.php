@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use app\models\Organisation;
+use app\models\User;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\OrganisationMembers */

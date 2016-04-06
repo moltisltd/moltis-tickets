@@ -22,12 +22,12 @@ $session = new Session();
 $errors = $session->getErrors();
 $session->clearErrors();
 foreach ($errors as $e) {
-    ?><div class="alert alert-danger"><?= $e ?></div><?php
+    ?><div class="alert alert-danger"><h2><?= $e ?></h2></div><?php
 }
 $successes = $session->getSuccesses();
 $session->clearSuccesses();
 foreach ($successes as $e) {
-    ?><div class="alert alert-success"><?= $e ?></div><?php
+    ?><div class="alert alert-success"><h2><?= $e ?></h2></div><?php
 }
 ?>
 

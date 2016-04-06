@@ -62,6 +62,9 @@ $config = [
         'account' => [
             'class' => 'app\modules\account\Module',
         ],
+        'foxden' => [
+            'class' => 'app\modules\foxden\Module',
+        ],
     ],
 ];
 
