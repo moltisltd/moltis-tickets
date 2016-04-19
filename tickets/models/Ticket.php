@@ -41,10 +41,10 @@ class Ticket extends \yii\db\ActiveRecord {
             [['name'], 'string', 'max' => 50],
             [['description'], 'string', 'max' => 255],
             ['sell_until', function($attribute, $params) {
-                if($this->sell_until <= $this->sell_from) {
-                    $this->addError($attribute, Yii::t('app','Sell until time must be later than sell from time'));
-                }
-            }],
+                    if ($this->sell_until <= $this->sell_from) {
+                        $this->addError($attribute, Yii::t('app', 'Sell until time must be later than sell from time'));
+                    }
+                }],
         ];
     }
 
@@ -71,13 +71,62 @@ class Ticket extends \yii\db\ActiveRecord {
     public function getGroup() {
         return $this->hasOne(TicketGroup::className(), ['id' => 'group_id']);
     }
+
     public function getType() {
         return $this->hasOne(TicketType::className(), ['id' => 'type_id']);
     }
+
     public function getCartItems() {
         return $this->hasMany(CartItems::className(), ['ticket_id' => 'id']);
     }
+
     public function getAccessCodes() {
         return $this->hasMany(AccessCode::className(), ['ticket_id' => 'id']);
     }
+
+    /**
+     * return boolean
+     */
+    public function isAvailable() {
+        $now = date('Y-m-d H:i:s');
+        if ($this->sell_from <= $now && $this->sell_until >= $now) {
+            $group = $this->getGroup()->one();
+            if ($group->ticket_limit > 0 && $group->getSoldQuantity() >= $group->ticket_limit) { // group ticket limit
+                return false;
+            } else if ($this->ticket_limit > 0 && $this->getSoldQuantity() >= $this->ticket_limit) { // ticket limit
+                return false;
+            }
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    public function getSoldQuantity() {
+        $cartItems = $this->getCartItems()->all();
+        $quantitySold = 0;
+        foreach ($cartItems as $item) {
+            $cart = $item->getCart()->one();
+            if ($cart->status == Cart::CART_SOLD) {
+                $quantitySold += $item->quantity;
+            }
+        }
+        return $quantitySold;
+    }
+
+    public function getAvailableQuantity() {
+        $group = $this->getGroup()->one();
+        $ticketAvailable = $this->ticket_limit - $this->getSoldQuantity();
+        if ($group->ticket_limit) {
+            $groupAvailable = $group->getAvailableQuantity();
+            if ($groupAvailable < $ticketAvailable || !$this->ticket_limit) {
+                return $groupAvailable;
+            }
+        }
+        if ($this->ticket_limit) {
+            return $ticketAvailable;
+        }
+        return false;
+    }
+
 }

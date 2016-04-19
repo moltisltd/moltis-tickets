@@ -64,4 +64,25 @@ class TicketGroup extends \yii\db\ActiveRecord {
         return $list;
     }
 
+    public function getSoldQuantity() {
+        $quantitySold = 0;
+        $tickets = $this->getTickets()->all();
+        foreach ($tickets as $ticket) {
+            $cartItems = $ticket->getCartItems()->all();
+            foreach ($cartItems as $item) {
+                $cart = $item->getCart()->one();
+                if ($cart->status == Cart::CART_SOLD) {
+                    $quantitySold += $item->quantity;
+                }
+            }
+        }
+        return $quantitySold;
+    }
+
+    public function getAvailableQuantity() {
+        if ($this->ticket_limit) {
+            return $this->ticket_limit - $this->getSoldQuantity();
+        }
+        return false;
+    }
 }

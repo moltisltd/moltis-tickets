@@ -63,6 +63,7 @@ class Cart extends \yii\db\ActiveRecord {
 
     public static function getCurrentCart() {
         if (($cart = self::findOne(['customer_id' => \Yii::$app->user->identity->id, 'status' => self::CART_PENDING])) !== null) {
+            $cart->cleanUp();
             return $cart;
         }
         $cart = new Cart();
@@ -111,6 +112,20 @@ class Cart extends \yii\db\ActiveRecord {
         }
     }
 
+    public function updateItem($id, $quantity) {
+        if ($this->status == self::CART_PENDING) {
+            if (($cart_item = CartItems::findOne(['cart_id' => $this->id, 'ticket_id' => $id])) === null) {
+                return;
+            }
+            $cart_item->quantity = $quantity;
+            $cart_item->save();
+            $this->updateCart();
+            if ($cart_item->quantity == 0) {
+                $this->removeItem($id);
+            }
+        }
+    }
+
     public function updateCart() {
         $this->updated = date('Y-m-d H:i:s');
         $this->save();
@@ -125,6 +140,7 @@ class Cart extends \yii\db\ActiveRecord {
     }
 
     public function processCart() {
+        $this->cleanUp();
         $this->quantity = 0;
         $this->subtotal = 0;
         $this->fees = 0;
@@ -144,6 +160,25 @@ class Cart extends \yii\db\ActiveRecord {
             case self::CART_PENDING: return Yii::t('app', 'Pending');
             case self::CART_SOLD: return Yii::t('app', 'Completed');
             case self::CART_REFUNDED: return Yii::t('app', 'Refunded');
+        }
+    }
+
+    public function cleanUp() {
+        $items = $this->getItems()->all();
+        $items_removed = false;
+        foreach ($items as $item) {
+            $ticket = Ticket::find($item->ticket_id)->one();
+            if (!$ticket->isAvailable()) {
+                $this->removeItem($item->ticket_id);
+                $items_removed = true;
+            } else if ($item->quantity > $ticket->getAvailableQuantity()) {
+                $this->updateItem($item->ticket_id, $ticket->getAvailableQuantity());
+                $items_removed = true;
+            }
+        }
+        if ($items_removed) {
+            $session = new Session();
+            $session->addError(Yii::t('app', 'Unavailable tickets removed'));
         }
     }
 
