@@ -6,7 +6,7 @@ use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 
-$_event = Event::findOne(1);
+$_event = Event::findOne(2);
 $location = $_event->getLocation()->one();
 $formatter = Yii::$app->formatter;
 
