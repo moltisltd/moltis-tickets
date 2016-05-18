@@ -18,7 +18,7 @@ $this->title = Yii::t('app', '{owner} - {event}', ['owner' => $_event->owner->na
     <h2><?= $formatter->asDate($_event->start_time) ?> - <?= $formatter->asDate($_event->end_time) ?></h2>
     <h3><?= Yii::t('app', '{name}, {address}, {postcode}', ['name' => $location->name, 'address' => $location->address, 'postcode' => $location->postcode]) ?></h3>
 
-    <p><?= $_event->description ?></p>
+    <p><?= nl2br( $_event->description ) ?></p>
     <hr>
     <div class="body-content">
         <?php if (Yii::$app->user->isGuest) : ?>
@@ -36,7 +36,7 @@ $this->title = Yii::t('app', '{owner} - {event}', ['owner' => $_event->owner->na
 
         <?php
         foreach ($_event->ticketGroups as $group) {
-            if (sizeof($_event->ticketGroups) > 1) {
+            if (sizeof($_event->ticketGroups) > 1 && sizeof($group->tickets) > 0) {
                 ?><h2><?= $group->name ?></h2><?php
             }
             $group_sold_out = false;
