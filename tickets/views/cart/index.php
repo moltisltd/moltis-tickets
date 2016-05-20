@@ -46,7 +46,7 @@ yii\grid\GridView::widget([
         [
             'attribute' => 'quantity',
             'content' => function($model, $index, $widget, $grid) {
-                return '<a class="btn btn-xs btn-info" href="' . Url::to(['/cart/add/', 'id' => $model->ticket_id]) . '">+</a>'
+                return (($model->ticket->getAvailableQuantity() === false || $model->ticket->getAvailableQuantity() > $model->quantity) ? '<a class="btn btn-xs btn-info" href="' . Url::to(['/cart/add/', 'id' => $model->ticket_id]) . '">+</a>' : '')
                         . $model->quantity
                         . (($model->quantity > 0) ? '<a class="btn btn-xs btn-info" href="' . Url::to(['/cart/reduce/', 'id' => $model->ticket_id]) . '">-</a>' : '');
             }

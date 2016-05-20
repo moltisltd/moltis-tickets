@@ -90,7 +90,7 @@ class Ticket extends \yii\db\ActiveRecord {
     public function isAvailable() {
         $now = date('Y-m-d H:i:s');
         if ($this->sell_from <= $now && $this->sell_until >= $now) {
-            $group = $this->getGroup()->one();
+            $group = $this->group;
             if ($group->ticket_limit > 0 && $group->getSoldQuantity() >= $group->ticket_limit) { // group ticket limit
                 return false;
             } else if ($this->ticket_limit > 0 && $this->getSoldQuantity() >= $this->ticket_limit) { // ticket limit
@@ -115,7 +115,7 @@ class Ticket extends \yii\db\ActiveRecord {
     }
 
     public function getAvailableQuantity() {
-        $group = $this->getGroup()->one();
+        $group = $this->group;
         $ticketAvailable = $this->ticket_limit - $this->getSoldQuantity();
         if ($group->ticket_limit) {
             $groupAvailable = $group->getAvailableQuantity();
