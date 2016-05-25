@@ -28,8 +28,8 @@ $successes = $session->getSuccesses();
 $session->clearSuccesses();
 foreach ($successes as $e) {
     ?><div class="alert alert-success"><h2><?= $e ?></h2></div><?php
-}
-?>
+        }
+        ?>
 
 <?=
 yii\grid\GridView::widget([
@@ -74,7 +74,7 @@ yii\grid\GridView::widget([
             <h3>
                 <?php if ($cart->quantity > 0) : ?>
                     Your total: <?= $cart->quantity ?> tickets totalling <?= $formatter->asCurrency($cart->subtotal) ?> <small>(+ card processing fee of <?= $formatter->asCurrency($cart->stripe_fee) ?>)</small>
-                    <?php if ($cartItems->one()->ticket->group->event->owner->stripe_user_id) : ?>
+                    <?php if ($cart->total > 0 && $cartItems->one()->ticket->group->event->owner->stripe_user_id) : ?>
                         <form style="display:inline-block;vertical-align:middle;margin-left:50px;" action="<?= Url::to('charge') ?>" method="GET">
                             <script
                                 src="https://checkout.stripe.com/checkout.js" class="stripe-button"
@@ -85,11 +85,15 @@ yii\grid\GridView::widget([
                                 data-currency="gbp">
                             </script>
                         </form>
+                    <?php elseif ($cart->total == 0 && $cartItems->one()->ticket) : ?>
+                        <form style="display:inline-block;vertical-align:middle;margin-left:50px;" action="<?= Url::to('charge') ?>" method="GET">
+                            <button type="submit" class="btn btn-success"><?php echo Yii::t('app', 'Confirm tickets'); ?></button>
+                        </form>
                     <?php endif; ?>
                 <?php else : ?>
                     <?= Yii::t('app', 'Nothing in here! {home}', ['home' => Html::a(Yii::t('app', 'Go pick some tickets'), ['/'])]); ?>
                 <?php endif; ?>
-    </h3>
-        <br><br>
-        <small><?= Yii::t('app', 'Kaspersky Anti-Virus may block your ability to use the cart system. If this happens, you may need to use an alternate device (Tixty is mobile-friendly) or temporarily disable Kaspersky.') ?></small>
+            </h3>
+            <br><br>
+            <small><?= Yii::t('app', 'Kaspersky Anti-Virus may block your ability to use the cart system. If this happens, you may need to use an alternate device (Tixty is mobile-friendly) or temporarily disable Kaspersky.') ?></small>
 </div>

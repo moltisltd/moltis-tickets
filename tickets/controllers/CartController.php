@@ -82,6 +82,9 @@ class CartController extends \yii\web\Controller {
 
         $cart = Cart::getCurrentCart();
         $cart->processCart();
+        if ($cart->total == 0) {
+            return $this->actionSave();
+        }
         try {
             $stripe_user_id = $cart->items[0]->ticket->group->event->owner->stripe_user_id;
             if ($stripe_user_id) {
@@ -145,6 +148,64 @@ EOT;
             //card declined
             $session->addError(Yii::t('app', 'Looks like your card was declined or some other error happened'));
         }
+
+        return $this->redirect('index');
+    }
+
+    public function actionSave() {
+        $session = new Session();
+        $user = Yii::$app->user->identity;
+
+        $cart = Cart::getCurrentCart();
+        $cart->processCart();
+        if ($cart->total > 0) {
+            return $this->actionCharge();
+        }
+        $cart->status = Cart::CART_SOLD;
+        $cart->save();
+        $session->addSuccess(Yii::t('app', 'Congratulations, you\'ve completed your order!'));
+
+        $cart_lines = [];
+        foreach ($cart->items as $item) {
+            $cart_lines[] = $item->ticket->group->event->name . ': ' . $item->ticket->name . ' x' . $item->quantity . ' @ ' . $item->ticket->ticket_price . ' each';
+        }
+        $cart_details = implode("\n", $cart_lines);
+
+        $email = new Email();
+        $email->to_name = $user->name;
+        $email->to_email = $user->email;
+        $email->subject = "Your Tixty Purchase";
+        $message = <<<EOT
+Hi {$user->name}!!
+
+You just bought {$cart->quantity} tickets for a total of {$cart->total} - details below.
+
+Thanks,
+
+Tixty
+
+---
+{$cart_details}
+EOT;
+        $email->body = nl2br($message);
+        $email->save();
+        $email->send();
+
+        $email = new Email();
+        $email->to_name = "Tixty";
+        $email->to_email = \Yii::$app->params['adminEmail'];
+        $email->subject = "Tixty Purchase #{$cart->id}";
+        $message = <<<EOT
+{$user->name} just bought {$cart->quantity} tickets for a total of {$cart->total} - details below.
+
+Tixty
+
+---
+{$cart_details}
+EOT;
+        $email->body = nl2br($message);
+        $email->save();
+        $email->send();
 
         return $this->redirect('index');
     }
