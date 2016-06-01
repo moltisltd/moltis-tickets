@@ -3,7 +3,7 @@
 use app\models\Event;
 use app\models\Cart;
 
-$_event = Event::findOne(1);
+$_event = Event::findOne(2);
 
 $carts = Cart::findAll(['status' => Cart::CART_SOLD]);
 $sold_tickets = [];
@@ -17,6 +17,7 @@ foreach ($carts as $cart) {
     }
 }
 $sold_total = 0;
+$total_tickets_sold = 0;
 $this->title = Yii::t('app', 'Event Summary');
 ?>
 <div class="foxden-default-index">
@@ -28,6 +29,7 @@ $this->title = Yii::t('app', 'Event Summary');
         }
         foreach ($group->tickets as $ticket) {
             $quantity_sold = isset($sold_tickets[$ticket->id]) ? $sold_tickets[$ticket->id] : 0;
+            $total_tickets_sold += $quantity_sold;
             $sold_total += $quantity_sold * ($ticket->ticket_price - $ticket->ticket_fee);
             ?>
             <div class="row">
@@ -51,7 +53,7 @@ $this->title = Yii::t('app', 'Event Summary');
             <strong><?= Yii::t('app', 'Sales Total') ?></strong>
         </div>
         <div class="col-md-2 col-xs-1">
-            <?= array_sum($sold_tickets) ?>
+            <?= $total_tickets_sold ?>
         </div>
         <div class="col-md-2 col-xs-5 text-right">
             <?= Yii::$app->formatter->asCurrency($sold_total) ?>

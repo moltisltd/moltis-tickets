@@ -18,7 +18,7 @@ $this->title = Yii::t('app', '{owner} - {event}', ['owner' => $_event->owner->na
     <h2><?= $formatter->asDate($_event->start_time) ?> - <?= $formatter->asDate($_event->end_time) ?></h2>
     <h3><?= Yii::t('app', '{name}, {address}, {postcode}', ['name' => $location->name, 'address' => $location->address, 'postcode' => $location->postcode]) ?></h3>
 
-    <p><?= nl2br( $_event->description ) ?></p>
+    <p><?= nl2br($_event->description) ?></p>
     <hr>
     <div class="body-content">
         <?php if (Yii::$app->user->isGuest) : ?>
@@ -36,8 +36,8 @@ $this->title = Yii::t('app', '{owner} - {event}', ['owner' => $_event->owner->na
 
         <?php
         foreach ($_event->ticketGroups as $group) {
-            if (sizeof($_event->ticketGroups) > 1 && sizeof($group->tickets) > 0) {
-                ?><h2><?= $group->name ?></h2><?php
+            if (sizeof($group->tickets) == 0) {
+                continue;
             }
             $group_sold_out = false;
             if ($group->ticket_limit > 0) { // limited sales
@@ -55,6 +55,9 @@ $this->title = Yii::t('app', '{owner} - {event}', ['owner' => $_event->owner->na
                 if ($sold_count_all >= $group->ticket_limit) {
                     $group_sold_out = true;
                 }
+                ?><h2><?= Yii::t('app', '{name} <small>({remaining} left)</small>', ['name' => $group->name, 'remaining' => ($group->ticket_limit - $sold_count_all)]) ?></h2><?php
+            } else {
+                ?><h2><?= $group->name ?></h2><?php
             }
 
             foreach ($group->tickets as $ticket) {
@@ -86,6 +89,9 @@ $this->title = Yii::t('app', '{owner} - {event}', ['owner' => $_event->owner->na
                                 <input type="hidden" name="id" value="<?= $ticket->id ?>">
                                 <button class="btn btn-sm btn-info" type="submit">Add to cart</button>
                             </form>
+                            <?php if ($ticket->ticket_limit > 0) : ?>
+                            <?= Yii::t('app', '<small>({remaining} left)</small>', ['remaining' => ($ticket->ticket_limit - $sold_count[$ticket->id])]) ?>
+                            <?php endif; ?>
                         <?php endif; ?>
                         <br><br>
                     </div>

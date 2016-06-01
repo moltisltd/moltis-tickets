@@ -75,7 +75,7 @@ yii\grid\GridView::widget([
                 <?php if ($cart->quantity > 0) : ?>
                     Your total: <?= $cart->quantity ?> tickets totalling <?= $formatter->asCurrency($cart->subtotal) ?> <small>(+ card processing fee of <?= $formatter->asCurrency($cart->stripe_fee) ?>)</small>
                     <?php if ($cart->total > 0 && $cartItems->one()->ticket->group->event->owner->stripe_user_id) : ?>
-                        <form style="display:inline-block;vertical-align:middle;margin-left:50px;" action="<?= Url::to('charge') ?>" method="GET">
+                        <form style="display:inline-block;vertical-align:middle;margin-left:50px;" action="<?= Url::to('/cart/charge') ?>" method="GET">
                             <script
                                 src="https://checkout.stripe.com/checkout.js" class="stripe-button"
                                 data-key="<?php echo Yii::$app->params['stripePublicKey']; ?>"
