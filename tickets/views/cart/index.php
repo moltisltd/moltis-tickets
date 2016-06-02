@@ -86,7 +86,7 @@ yii\grid\GridView::widget([
                             </script>
                         </form>
                     <?php elseif ($cart->total == 0 && $cartItems->one()->ticket) : ?>
-                        <form style="display:inline-block;vertical-align:middle;margin-left:50px;" action="<?= Url::to('charge') ?>" method="GET">
+                        <form style="display:inline-block;vertical-align:middle;margin-left:50px;" action="<?= Url::to('/cart/save') ?>" method="GET">
                             <button type="submit" class="btn btn-success"><?php echo Yii::t('app', 'Confirm tickets'); ?></button>
                         </form>
                     <?php endif; ?>

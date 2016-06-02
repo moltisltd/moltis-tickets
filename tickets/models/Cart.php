@@ -144,13 +144,16 @@ class Cart extends \yii\db\ActiveRecord {
         $this->quantity = 0;
         $this->subtotal = 0;
         $this->fees = 0;
+        $this->stripe_fee = 0;
         foreach ($this->items as $item) {
             $this->quantity += $item->quantity;
             $this->subtotal += $item->quantity * $item->ticket->ticket_price;
             $this->fees += $item->quantity * $item->ticket->ticket_fee;
         }
-        $this->stripe_fee = round(0.015 * $this->subtotal + 0.2, 2);
-        $this->fees += $this->stripe_fee;
+        if ($this->subtotal > 0) {
+            $this->stripe_fee = round(0.015 * $this->subtotal + 0.2, 2);
+            $this->fees += $this->stripe_fee;
+        }
         $this->total = $this->subtotal + $this->stripe_fee;
     }
 
