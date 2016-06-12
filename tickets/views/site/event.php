@@ -40,21 +40,21 @@ $this->title = Yii::t('app', '{owner} - {event}', ['owner' => $_event->owner->na
                 continue;
             }
             $group_sold_out = false;
+			$sold_count_all = 0;
+			$sold_count = [];
+			foreach ($group->tickets as $ticket) {
+				$sold_count[$ticket->id] = 0;
+				foreach ($ticket->cartItems as $cartItems) {
+					if ($cartItems->cart->status == Cart::CART_SOLD) {
+						$sold_count_all += $cartItems->quantity;
+						$sold_count[$ticket->id] += $cartItems->quantity;
+					}
+				}
+			}
+			if ($sold_count_all >= $group->ticket_limit) {
+				$group_sold_out = true;
+			}
             if ($group->ticket_limit > 0) { // limited sales
-                $sold_count_all = 0;
-                $sold_count = [];
-                foreach ($group->tickets as $ticket) {
-                    $sold_count[$ticket->id] = 0;
-                    foreach ($ticket->cartItems as $cartItems) {
-                        if ($cartItems->cart->status == Cart::CART_SOLD) {
-                            $sold_count_all += $cartItems->quantity;
-                            $sold_count[$ticket->id] += $cartItems->quantity;
-                        }
-                    }
-                }
-                if ($sold_count_all >= $group->ticket_limit) {
-                    $group_sold_out = true;
-                }
                 ?><h2><?= Yii::t('app', '{name} <small>({remaining} left)</small>', ['name' => $group->name, 'remaining' => ($group->ticket_limit - $sold_count_all)]) ?></h2><?php
             } else {
                 ?><h2><?= $group->name ?></h2><?php
@@ -79,7 +79,7 @@ $this->title = Yii::t('app', '{owner} - {event}', ['owner' => $_event->owner->na
                             <?= Yii::t('app', 'No longer available'); ?>
                         <?php elseif (Yii::$app->user->isGuest) : ?>
                             <a href="<?= \yii\helpers\Url::to('site/login') ?>" class="btn btn-success">Login</a>
-                        <?php elseif ($group_sold_out || ($ticket->ticket_limit > 0 && $sold_count[$ticket->id] >= $ticket->ticket_limit)) : ?>
+                        <?php elseif ($group_sold_out || ($ticket->ticket_limit > 0 && isset($sold_count[$ticket->id]) && $sold_count[$ticket->id] >= $ticket->ticket_limit)) : ?>
                             <?= Yii::t('app', 'Sold out'); ?>
                         <?php else : ?>
                             <form class="form-inline" style="display:inline-block" action="<?= \yii\helpers\Url::to('cart/add') ?>" method="GET">
@@ -90,7 +90,7 @@ $this->title = Yii::t('app', '{owner} - {event}', ['owner' => $_event->owner->na
                                 <button class="btn btn-sm btn-info" type="submit">Add to cart</button>
                             </form>
                             <?php if ($ticket->ticket_limit > 0) : ?>
-                            <?= Yii::t('app', '<small>({remaining} left)</small>', ['remaining' => ($ticket->ticket_limit - $sold_count[$ticket->id])]) ?>
+                            <?= Yii::t('app', '<small>({remaining} left)</small>', ['remaining' => ($ticket->ticket_limit - (isset($sold_count[$ticket->id]) ? $sold_count[$ticket->id] : 0))]) ?>
                             <?php endif; ?>
                         <?php endif; ?>
                         <br><br>
