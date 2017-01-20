@@ -12,10 +12,9 @@ use yii\filters\VerbFilter;
 /**
  * EventsController implements the CRUD actions for Event model.
  */
-class EventsController extends Controller
-{
-    public function behaviors()
-    {
+class EventsController extends Controller {
+
+    public function behaviors() {
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -30,8 +29,7 @@ class EventsController extends Controller
      * Lists all Event models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         if (\Yii::$app->user->isGuest) {
             return $this->redirect('/site/denied/');
         }
@@ -43,8 +41,8 @@ class EventsController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -53,8 +51,7 @@ class EventsController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
         if (\Yii::$app->user->isGuest) {
             return $this->redirect('/site/denied/');
         }
@@ -64,15 +61,18 @@ class EventsController extends Controller
             return $this->redirect('/site/denied/');
         } else if (!$user->admin) {
             $organisations = $user->organisations;
-            foreach($organisations as $organisation) {
+            $owner = false;
+            foreach ($organisations as $organisation) {
                 if ($model->owner_id == $organisation->id) {
-                    break 2;
+                    $owner = true;
                 }
             }
-            return $this->redirect('/site/denied');
+            if (!$owner) {
+                return $this->redirect('/site/denied');
+            }
         }
         return $this->render('view', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 
@@ -81,8 +81,7 @@ class EventsController extends Controller
      * @param string $slug
      * @return mixed
      */
-    public function actionViewslug($slug)
-    {
+    public function actionViewslug($slug) {
         if (\Yii::$app->user->isGuest) {
             return $this->redirect('/site/denied/');
         }
@@ -92,15 +91,18 @@ class EventsController extends Controller
             return $this->redirect('/site/denied/');
         } else if (!$user->admin) {
             $organisations = $user->organisations;
-            foreach($organisations as $organisation) {
+            $owner = false;
+            foreach ($organisations as $organisation) {
                 if ($model->owner_id == $organisation->id) {
-                    break 2;
+                    $owner = true;
                 }
             }
-            return $this->redirect('/site/denied');
+            if (!$owner) {
+                return $this->redirect('/site/denied');
+            }
         }
         return $this->render('view', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 
@@ -109,8 +111,7 @@ class EventsController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
-    {
+    public function actionCreate() {
         if (\Yii::$app->user->isGuest) {
             return $this->redirect('/site/denied/');
         }
@@ -124,7 +125,7 @@ class EventsController extends Controller
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
-                'model' => $model,
+                        'model' => $model,
             ]);
         }
     }
@@ -135,8 +136,7 @@ class EventsController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id) {
         if (\Yii::$app->user->isGuest) {
             return $this->redirect('/site/denied/');
         }
@@ -146,19 +146,22 @@ class EventsController extends Controller
             return $this->redirect('/site/denied/');
         } else if (!$user->admin) {
             $organisations = $user->organisations;
-            foreach($organisations as $organisation) {
+            $owner = false;
+            foreach ($organisations as $organisation) {
                 if ($model->owner_id == $organisation->id) {
-                    break 2;
+                    $owner = true;
                 }
             }
-            return $this->redirect('/site/denied');
+            if (!$owner) {
+                return $this->redirect('/site/denied');
+            }
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
-                'model' => $model,
+                        'model' => $model,
             ]);
         }
     }
@@ -169,8 +172,7 @@ class EventsController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id)
-    {
+    public function actionDelete($id) {
         if (\Yii::$app->user->isGuest) {
             return $this->redirect('/site/denied/');
         }
@@ -180,12 +182,15 @@ class EventsController extends Controller
             return $this->redirect('/site/denied/');
         } else if (!$user->admin) {
             $organisations = $user->organisations;
-            foreach($organisations as $organisation) {
+            $owner = false;
+            foreach ($organisations as $organisation) {
                 if ($model->owner_id == $organisation->id) {
-                    break 2;
+                    $owner = true;
                 }
             }
-            return $this->redirect('/site/denied');
+            if (!$owner) {
+                return $this->redirect('/site/denied');
+            }
         }
         $model->delete();
 
@@ -199,8 +204,7 @@ class EventsController extends Controller
      * @return Event the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = Event::findOne($id)) !== null) {
             return $model;
         } else {
@@ -215,12 +219,12 @@ class EventsController extends Controller
      * @return Event the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModelBySlug($slug)
-    {
+    protected function findModelBySlug($slug) {
         if (($model = Event::findOne(['slug' => $slug])) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 }
