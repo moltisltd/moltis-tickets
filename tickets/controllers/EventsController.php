@@ -82,27 +82,11 @@ class EventsController extends Controller {
      * @return mixed
      */
     public function actionViewslug($slug) {
-        if (\Yii::$app->user->isGuest) {
-            return $this->redirect('/site/denied/');
-        }
+        \Stripe\Stripe::setApiKey(Yii::$app->params['stripeSecretKey']);
         $model = $this->findModelBySlug($slug);
-        $user = \Yii::$app->user->identity;
-        if (!$user->admin && count($user->organisations) == 0) {
-            return $this->redirect('/site/denied/');
-        } else if (!$user->admin) {
-            $organisations = $user->organisations;
-            $owner = false;
-            foreach ($organisations as $organisation) {
-                if ($model->owner_id == $organisation->id) {
-                    $owner = true;
-                }
-            }
-            if (!$owner) {
-                return $this->redirect('/site/denied');
-            }
-        }
-        return $this->render('view', [
-                    'model' => $model,
+        
+        return $this->render('event', [
+                    '_event' => $model,
         ]);
     }
 
