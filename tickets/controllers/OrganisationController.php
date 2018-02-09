@@ -72,7 +72,7 @@ class OrganisationController extends Controller {
             $organisations = $user->organisations;
             foreach($organisations as $organisation) {
                 if ($model->id == $organisation->id) {
-                    break 2;
+                    break;
                 }
             }
             return $this->redirect('/site/denied');
@@ -100,7 +100,7 @@ class OrganisationController extends Controller {
             $organisations = $user->organisations;
             foreach($organisations as $org) {
                 if ($organisation->id == $org->id) {
-                    break 2;
+                    break;
                 }
             }
             return $this->redirect('/site/denied');
@@ -196,7 +196,7 @@ EOT;
             $organisations = $user->organisations;
             foreach($organisations as $organisation) {
                 if ($model->id == $organisation->id) {
-                    break 2;
+                    break;
                 }
             }
             return $this->redirect('/site/denied');

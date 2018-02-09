@@ -36,8 +36,8 @@ class AccessCodeController extends Controller
 			return $this->goHome();
 		}
         $user = \Yii::$app->user->identity;
-        if (!$user->admin) {
-            return $this->goHome();
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
         }
         $dataProvider = new ActiveDataProvider([
             'query' => AccessCode::find(),
@@ -59,8 +59,8 @@ class AccessCodeController extends Controller
 			return $this->goHome();
 		}
         $user = \Yii::$app->user->identity;
-        if (!$user->admin) {
-            return $this->goHome();
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
         }
         return $this->render('view', [
             'model' => $this->findModel($id),
@@ -78,8 +78,8 @@ class AccessCodeController extends Controller
 			return $this->goHome();
 		}
         $user = \Yii::$app->user->identity;
-        if (!$user->admin) {
-            return $this->goHome();
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
         }
         $model = new AccessCode();
 
@@ -104,8 +104,8 @@ class AccessCodeController extends Controller
 			return $this->goHome();
 		}
         $user = \Yii::$app->user->identity;
-        if (!$user->admin) {
-            return $this->goHome();
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
         }
         $model = $this->findModel($id);
 
@@ -130,8 +130,8 @@ class AccessCodeController extends Controller
 			return $this->goHome();
 		}
         $user = \Yii::$app->user->identity;
-        if (!$user->admin) {
-            return $this->goHome();
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
         }
         $this->findModel($id)->delete();
 

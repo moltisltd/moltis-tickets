@@ -32,6 +32,13 @@ class LocationController extends Controller
      */
     public function actionIndex()
     {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        }
         $dataProvider = new ActiveDataProvider([
             'query' => Location::find(),
         ]);
@@ -48,6 +55,13 @@ class LocationController extends Controller
      */
     public function actionView($id)
     {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        }
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -60,6 +74,13 @@ class LocationController extends Controller
      */
     public function actionCreate()
     {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect('/site/denied/');
+        }
+        $user = \Yii::$app->user->identity;
+        if (!$user->admin && count($user->organisations) == 0) {
+            return $this->redirect('/site/denied/');
+        }
         $model = new Location();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
