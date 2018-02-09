@@ -15,35 +15,35 @@ class Session extends \yii\base\Model {
         $this->_session = \Yii::$app->session;
         $this->_session->open();
         if (!$this->_session->get(self::KEY_ERROR)) {
-            $this->clearErrors();
+            $this->clearErrorMessages();
         }
         if (!$this->_session->get(self::KEY_SUCCESS)) {
-            $this->clearSuccesses();
+            $this->clearSuccessMessages();
         }
         parent::init();
     }
 
-    public function addError($message) {
+    public function addErrorMessage($message) {
         $this->_session->get(self::KEY_ERROR)->append($message);
     }
 
-    public function getErrors() {
+    public function getErrorMessages($attribute = null) {
         return $this->_session->get(self::KEY_ERROR);
     }
 
-    public function clearErrors() {
+    public function clearErrorMessages() {
         $this->_session->set(self::KEY_ERROR, new \ArrayObject);
     }
 
-    public function addSuccess($message) {
+    public function addSuccessMessage($message) {
         $this->_session->get(self::KEY_SUCCESS)->append($message);
     }
 
-    public function getSuccesses() {
+    public function getSuccessMessages() {
         return $this->_session->get(self::KEY_SUCCESS);
     }
 
-    public function clearSuccesses() {
+    public function clearSuccessMessages() {
         $this->_session->set(self::KEY_SUCCESS, new \ArrayObject);
     }
 

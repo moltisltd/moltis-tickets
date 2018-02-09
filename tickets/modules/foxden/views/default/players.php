@@ -3,7 +3,7 @@
 use app\models\Event;
 use app\models\Cart;
 
-$_event = Event::findOne(2);
+$_event = Event::findOne(8);
 $this->title = Yii::t('app', 'Player Summary');
 ?>
 <div class="foxden-default-index">

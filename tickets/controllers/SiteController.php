@@ -47,6 +47,7 @@ class SiteController extends Controller {
     }
 
     public function actionIndex() {
+	return $this->redirect(['/event/aim-misbehave'], 302);
         \Stripe\Stripe::setApiKey(Yii::$app->params['stripeSecretKey']);
         return $this->render('event');
     }

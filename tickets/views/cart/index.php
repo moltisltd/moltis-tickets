@@ -19,13 +19,13 @@ $formatter = \Yii::$app->formatter;
 <h1><?= Html::encode($this->title); ?></h1>
 <?php
 $session = new Session();
-$errors = $session->getErrors();
-$session->clearErrors();
+$errors = $session->getErrorMessages();
+$session->clearErrorMessages();
 foreach ($errors as $e) {
     ?><div class="alert alert-danger"><h2><?= $e ?></h2></div><?php
 }
-$successes = $session->getSuccesses();
-$session->clearSuccesses();
+$successes = $session->getSuccessMessages();
+$session->clearSuccessMessages();
 foreach ($successes as $e) {
     ?><div class="alert alert-success"><h2><?= $e ?></h2></div><?php
         }

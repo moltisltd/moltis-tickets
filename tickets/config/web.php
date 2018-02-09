@@ -66,7 +66,7 @@ $config = [
             'class' => 'app\modules\foxden\Module',
         ],
     ],
-    'timeZone' => 'Europe/London',
+//    'timeZone' => 'Europe/London',
 ];
 
 if (YII_ENV_DEV) {
