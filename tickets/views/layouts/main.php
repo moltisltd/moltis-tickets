@@ -73,7 +73,7 @@ if (Yii::$app->user->isGuest) {
                 </p>
 
                 <p class="pull-right">
-                    <span id="siteseal"><script type="text/javascript" src="https://seal.godaddy.com/getSeal?sealID=uZwMgPMRvYrjlxEriv2bg9OlaWnsLfb9gBi8nxGdi2E4GZ5zUmHm18EA4tPB"></script></span>
+                    <a href="<?php echo \yii\helpers\Url::to('/site/privacy'); ?>"><?php echo Yii::t('app', 'Privacy Policy'); ?></a>
                 </p>
             </div>
         </footer>

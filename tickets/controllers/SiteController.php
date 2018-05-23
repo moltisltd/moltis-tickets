@@ -64,6 +64,8 @@ class SiteController extends Controller {
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
+        } else if ($model->load(Yii::$app->request->post()) && $model->privacyUpdateNeeded()) {
+            return $this->render('privacy-update', ['model' => $model]);
         }
         return $this->render('login', [
                     'model' => $model,
@@ -92,8 +94,12 @@ class SiteController extends Controller {
         return $this->render('about');
     }
 
+    public function actionPrivacy() {
+        return $this->render('privacy');
+    }
+
     public function actionUser() {
-        $model = new app\models\User();
+        $model = new \app\models\User();
 
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {

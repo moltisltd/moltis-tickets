@@ -12,6 +12,7 @@ class LoginForm extends Model
 {
     public $email;
     public $password;
+    public $terms = 0;
     public $rememberMe = true;
 
     private $_user = false;
@@ -27,8 +28,20 @@ class LoginForm extends Model
             [['email', 'password'], 'required'],
             // rememberMe must be a boolean value
             ['rememberMe', 'boolean'],
+            ['terms', 'boolean'],
             // password is validated by validatePassword()
             ['password', 'validatePassword'],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels() {
+        return [
+            'email' => Yii::t('app', 'Email'),
+            'password' => Yii::t('app', 'Password'),
+            'terms' => Yii::t('app', 'I accept my details being recorded as per the privacy policy'),
         ];
     }
 
@@ -57,7 +70,29 @@ class LoginForm extends Model
     public function login()
     {
         if ($this->validate()) {
-            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600*24*30 : 0);
+            $user = $this->getUser();
+            if (!empty($this->terms)) {
+                $user->terms = $this->terms;
+                $user->save();
+            }
+            if (!empty($user->terms)) {
+                return Yii::$app->user->login($user, $this->rememberMe ? 3600 * 24 * 30 : 0);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Logs in a user using the provided username and password.
+     * @return boolean whether the user is logged in successfully
+     */
+    public function privacyUpdateNeeded()
+    {
+        if ($this->validate()) {
+            $user = $this->getUser();
+            if (empty($user->terms)) {
+                return true;
+            }
         }
         return false;
     }

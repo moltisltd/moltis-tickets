@@ -13,6 +13,7 @@ use Yii;
  * @property string $password
  * @property string $customer_token
  * @property integer $admin
+ * @property integer $terms
  * @property string $access_token
  */
 class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface {
@@ -29,12 +30,13 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface {
      */
     public function rules() {
         return [
-            [['name', 'email', 'password'], 'required'],
+            [['name', 'email', 'password', 'terms'], 'required'],
             [['name'], 'string', 'max' => 100],
             [['email'], 'string', 'max' => 255],
             [['password'], 'string', 'max' => 100, 'min' => 8],
             [['email'], 'unique'],
-            ['email', 'email'],
+            [['email'], 'email'],
+            [['terms', 'admin', 'id'], 'integer'],
         ];
     }
 
@@ -43,13 +45,14 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface {
      */
     public function attributeLabels() {
         return [
-            'id' => 'User ID',
-            'name' => 'Name',
-            'email' => 'Email',
-            'password' => 'Password',
-            'customer_token' => 'Stripe Customer Token',
-            'admin' => 'Admin flag',
-            'access_token' => 'Security Access Token',
+            'id' => Yii::t('app', 'User ID'),
+            'name' => Yii::t('app', 'Name'),
+            'email' => Yii::t('app', 'Email'),
+            'password' => Yii::t('app', 'Password'),
+            'customer_token' => Yii::t('app', 'Stripe Customer Token'),
+            'admin' => Yii::t('app', 'Admin flag'),
+            'access_token' => Yii::t('app', 'Security Access Token'),
+            'terms' => Yii::t('app', 'I accept my details being recorded as per the privacy policy'),
         ];
     }
 
@@ -112,6 +115,9 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface {
     public function beforeSave($insert) {
         if (parent::beforeSave($insert)) {
             if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+                return false;
+            }
+            if (!$this->terms) {
                 return false;
             }
             if ($this->isNewRecord) {

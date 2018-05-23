@@ -1,5 +1,8 @@
 /nbproject/private/
-/web/
 /public_html/
 /tickets/config/db.php
+/tickets/config/db.live.php
 /tickets/config/params.php
+/tickets/config/params.live.php
+web
+.idea
