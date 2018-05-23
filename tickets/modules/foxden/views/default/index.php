@@ -3,7 +3,7 @@
 use app\models\Event;
 use app\models\Cart;
 
-$_event = Event::findOne(8);
+$_event = Event::findOne(9);
 
 $carts = Cart::findAll(['status' => Cart::CART_SOLD]);
 $sold_tickets = [];
