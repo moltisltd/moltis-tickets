@@ -52,7 +52,7 @@ $config = [
         ],
         'formatter' => [
             'class' => 'yii\i18n\Formatter',
-            'currencyCode' => 'GBP',
+            'currencyCode' => '&pound;',
             'datetimeFormat' => 'MMM d, yyyy HH:mm',
         ]
     ],
