@@ -88,7 +88,9 @@ class Ticket extends \yii\db\ActiveRecord {
      * return boolean
      */
     public function isAvailable() {
+date_default_timezone_set('Europe/London');
         $now = date('Y-m-d H:i:s');
+date_default_timezone_set('UTC');
         if ($this->sell_from <= $now && $this->sell_until >= $now) {
             $group = $this->group;
             if ($group->ticket_limit > 0 && $group->getSoldQuantity() >= $group->ticket_limit) { // group ticket limit

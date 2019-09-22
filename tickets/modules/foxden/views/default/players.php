@@ -3,7 +3,8 @@
 use app\models\Event;
 use app\models\Cart;
 
-$_event = Event::findOne(11);
+$_event = Event::findOne(12);
+$_event = Event::find()->where('end_time > :now', ['now' => date('Y-m-d H:i:s')])->one();
 $this->title = Yii::t('app', 'Player Summary');
 ?>
 <div class="foxden-default-index">

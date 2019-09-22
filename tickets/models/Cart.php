@@ -171,7 +171,7 @@ class Cart extends \yii\db\ActiveRecord {
         $items_removed = false;
         foreach ($items as $item) {
             $ticket = Ticket::findOne($item->ticket_id);
-            if (!$ticket->isAvailable()) {
+            if (empty($ticket) || !$ticket->isAvailable()) {
                 $this->removeItem($item->ticket_id);
                 $items_removed = true;
             } else if ($ticket->getAvailableQuantity() !== false && $item->quantity > $ticket->getAvailableQuantity()) {

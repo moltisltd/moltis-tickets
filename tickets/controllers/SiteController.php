@@ -47,9 +47,9 @@ class SiteController extends Controller {
     }
 
     public function actionIndex() {
-	return $this->redirect(['/event/kneecaps'], 302);
-        \Stripe\Stripe::setApiKey(Yii::$app->params['stripeSecretKey']);
-        return $this->render('event');
+//	return $this->redirect(['/event/council'], 302);
+//        \Stripe\Stripe::setApiKey(Yii::$app->params['stripeSecretKey']);
+        return $this->render('index');
     }
 
     public function actionDenied() {

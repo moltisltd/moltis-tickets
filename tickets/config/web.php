@@ -1,5 +1,6 @@
 <?php
 
+date_default_timezone_set('Europe/London');
 $params = require(__DIR__ . '/params.php');
 $params['adminEmail'] = 'tixty@tixty.co.uk';
 $params['ticketFee'] = 0.50;
@@ -54,6 +55,7 @@ $config = [
             'class' => 'yii\i18n\Formatter',
             'currencyCode' => '&pound;',
             'datetimeFormat' => 'MMM d, yyyy HH:mm',
+//            'defaultTimeZone' => 'UTC',
         ]
     ],
     'sourceLanguage' => 'en-GB',

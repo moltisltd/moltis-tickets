@@ -7,6 +7,7 @@ use yii\helpers\Html;
 
 $location = $_event->getLocation()->one();
 $formatter = Yii::$app->formatter;
+date_default_timezone_set('Europe/London');
 
 $this->title = Yii::t('app', '{owner} - {event}', ['owner' => $_event->owner->name, 'event' => $_event->name]);
 ?>
